@@ -12,6 +12,7 @@ function rc(){
 	let c = document.cookie.split(";").find(v => v.slice(0,4) == "_d_=").slice(4)
 	return parseInt(c, 36).toString(2).split("").map((v,i) => +v ? i : -1).filter(i => i > -1);
 }
+document.cookie = "_d_=0"
 let imgs=rc();
 let start=0,pau=0,t,rsr=1,inside,left,right,up,down,img=0,gained=0,paused=0,invert=!1,sneaky=!1, lvl = 1;
 function fill(a){
