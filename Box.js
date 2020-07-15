@@ -1,3 +1,18 @@
+/* A few comments
+	D=die
+	R=regular
+	N=invisible
+	F=fake
+	W=win
+	B=bounce
+	U=slowstone
+	V=quicksand
+	A=jumpblock
+	S=fallblock
+	E=fake death
+	T=bounce jumpblock
+	*=New character {x,y,size,number (0 is default)}
+*/
 class Box {
 	static colors = {
 		"T": "#0BF",
@@ -8,7 +23,7 @@ class Box {
 		"V": "#FB0",
 		"B": "#00F",
 		"S": "#F0F",
-		"A": "93E"
+		"A": "#93E"
 	}
 	constructor(a){
 		this.x = a.x;
@@ -45,8 +60,7 @@ class Box {
 		this.by+=this.move.Up;
 		this.y=this.by+this.move.YSin*Math.sin(((new Date()).getTime()-time)/1200);
 		this.x=this.bx+this.move.XSin*Math.sin(((new Date()).getTime()-time)/1200);
-		if(contains(this.type,ni)){}
-		if(contains(this.type,tuo)){
+		if("NBASTR".split("").includes(this.type)){
 			left=(p.x>=this.x+this.w+10&&p.x+v.x<=this.x+this.w+15&&p.y>=this.y-12&&p.y<=this.y+this.h+12);
 			right=(p.x<=this.x-10&&p.x+v.x>=this.x-15&&p.y>=this.y-12&&p.y<=this.y+this.h+12);
 			up=(p.y>=this.y+this.h+10&&p.y+v.y<=this.y+this.h+15&&p.x>=this.x-12&&p.x<=this.x+this.w+12);
@@ -159,7 +173,7 @@ class Box {
 			}
 		}
 		if(this.type==='*'){
-			if(contains(this.w,imgs)||gained===this.w){
+			if(imgs.includes(this.w)||gained===this.w){
 				this.draw=false;
 			} else {
 				this.draw=true;
