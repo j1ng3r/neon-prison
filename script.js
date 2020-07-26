@@ -120,7 +120,6 @@ function die(){
 	ab();
 }
 var keys=[],mouse={x:0,y:0},clicked=false,clickin=null;
-function posIn(a,b,c){for(c in b)if(b[c]===a)return c;return-1}
 function poly(){
 	ctx.beginPath();
 	ctx.moveTo(arguments[0],arguments[1]);
