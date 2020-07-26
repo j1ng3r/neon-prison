@@ -136,11 +136,11 @@ function poly(...args){
 	ctx.fill();
 }
 
-function translatedPoly(){
+function translatedPoly(...args){
 	ctx.beginPath();
-	ctx.moveTo(arguments[0]+htmlCanvas.width-50,arguments[1]+htmlCanvas.height/2);
-	for(let i = 2; i < Math.floor(arguments.length/2)*2; i+=2){
-		ctx.lineTo(arguments[i]+htmlCanvas.width-50,arguments[i+1]+htmlCanvas.height/2);
+	ctx.moveTo(args[0]+htmlCanvas.width-50,args[1]+htmlCanvas.height/2);
+	for(let i = 2; i < Math.floor(args.length/2)*2; i+=2){
+		ctx.lineTo(args[i]+htmlCanvas.width-50,args[i+1]+htmlCanvas.height/2);
 	}
 	ctx.closePath();
 	ctx.fill();
