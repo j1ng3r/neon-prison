@@ -1,18 +1,18 @@
 let c = null, ctx = null;
 let time = 0;
 //These should get added into a Vector library
-let p = {x:0,y:0}, v = {x:0,y:0};
-function cc(a){
-	let c = a.filter((v,i,m)=>m.indexOf(v)===i).reduce((a,v) => a + 2**v, 0).toString(36);
+let playerCoords = {x:0,y:0}, playerVelocity = {x:0,y:0};
+function setCostumes(ary_unlockedCostumes){
+	let c = ary_unlockedCostumes.filter((v,i,m)=>m.indexOf(v)===i).reduce((a,v) => a + 2**v, 0).toString(36);
 	document.cookie=`_d_=${c};`
 }
-function rc(){
+function getUnlockedCostumes_as_ary(){
 	let c = document.cookie.split(";").find(v => v.slice(0,4) == "_d_=").slice(4)
 	return parseInt(c, 36).toString(2).split("").map((v,i) => +v ? i : -1).filter(i => i > -1);
 }
 document.cookie = "_d_=0";
-let imgs=rc();
-let start=0,pau=0,t,rsr=1,inside,left,right,up,down,img=0,gained=0,paused=0,invert=!1,sneaky=!1, lvl = 1;
+let unlockedCostumes=getUnlockedCostumes_as_ary();
+let start=0,pau=0,t,rsr=1,inside,left,right,up,down,player_costume=0,gained=0,paused=0,invert=!1,sneaky=!1, lvl = 1;
 function fill(color){
 	ctx.fillStyle = color;
 	if(invert){
@@ -30,8 +30,8 @@ function fill(color){
 function ab(c,d,e,f){
 	time=new Date().getTime();
 	gained=0;
-	p={x:0, y:0};
-	v={x:0, y:0};
+	playerCoords={x:0, y:0};
+	playerVelocity={x:0, y:0};
 	b=[];
 	c=lvlinfo[lvl],e='',f={t:null,x:null,y:null,w:null,h:null};
 	for(d in c){
@@ -120,11 +120,27 @@ function die(){
 	ab();
 }
 var keys=[],mouse={x:0,y:0},clicked=false,clickin=null;
-function poly(){
+/**
+ * Poly takes a list of argument pairs.
+ * [x, y, x, y] etc and draws a line from each point to the given coodinates.
+ * It fills it at the end.
+ * It doesn't change any ctx styles which
+ */
+function poly(...args){
 	ctx.beginPath();
-	ctx.moveTo(arguments[0],arguments[1]);
+	ctx.moveTo(args[0],args[1]);
+	for(var i = 2; i < Math.floor(args.length/2)*2; i+=2){
+		ctx.lineTo(args[i],args[i+1]);
+	}
+	ctx.closePath();
+	ctx.fill();
+}
+
+function translatedPoly(){
+	ctx.beginPath();
+	ctx.moveTo(arguments[0]+c.width-50,arguments[1]+c.height/2);
 	for(var i = 2; i < Math.floor(arguments.length/2)*2; i+=2){
-		ctx.lineTo(arguments[i],arguments[i+1]);
+		ctx.lineTo(arguments[i]+c.width-50,arguments[i+1]+c.height/2);
 	}
 	ctx.closePath();
 	ctx.fill();
@@ -166,8 +182,8 @@ window.onload = _ => {
 	ctx.canvas.width = 600;
 	ctx.canvas.height = 400;
 	ctx.textAlign = 'center';
-	if(!imgs.length){
-		cc(imgs=[0]);
+	if(!unlockedCostumes.length){
+		setCostumes(unlockedCostumes=[0]);
 	}
 	ab();
 	setInterval(function update(){
@@ -178,44 +194,44 @@ window.onload = _ => {
 				rsr=0;
 			}
 			if(!rsr&&!keys[82])rsr=1;
-			if(keys[37]||keys[65]){v.x-=1;l-=0.5;if(!start)start=Date.now()}
-			if(keys[39]||keys[68]){v.x+=1;l+=0.5;if(!start)start=Date.now()}
+			if(keys[37]||keys[65]){playerVelocity.x-=1;l-=0.5;if(!start)start=Date.now()}
+			if(keys[39]||keys[68]){playerVelocity.x+=1;l+=0.5;if(!start)start=Date.now()}
 			if(standing){
-				v.y = 0;
-				if(keys[38]||keys[87]){v.y=13;if(!start)start=Date.now()}
+				playerVelocity.y = 0;
+				if(keys[38]||keys[87]){playerVelocity.y=13;if(!start)start=Date.now()}
 			} else {
-				v.y-=0.3;
+				playerVelocity.y-=0.3;
 			}
-			if(p.y+v.y <= 0){
+			if(playerCoords.y+playerVelocity.y <= 0){
 				standing = true;
-				p.y=0;
-				v.y=0;
+				playerCoords.y=0;
+				playerVelocity.y=0;
 			} else {
 				standing = false;
 			}
-			if(p.x+v.x <= -500){
-				v.x = 0;
-				p.x = -500;
+			if(playerCoords.x+playerVelocity.x <= -500){
+				playerVelocity.x = 0;
+				playerCoords.x = -500;
 			}
-			if(p.x+v.x >= 500){
-				v.x = 0;
-				p.x = 500;
+			if(playerCoords.x+playerVelocity.x >= 500){
+				playerVelocity.x = 0;
+				playerCoords.x = 500;
 			}
 			for(var i in b)if(b[i].sense()=='levelup'){
 				lvl++;
 				if(gained){
-					imgs.push(gained);
-					cc(imgs);
-					imgs=rc();
+					unlockedCostumes.push(gained);
+					setCostumes(unlockedCostumes);
+					unlockedCostumes=getUnlockedCostumes_as_ary();
 				}
 				ab();
 				return;
 			}
 			l*=0.9;
-			v.y*=0.95;
-			v.x*=0.8;
-			p.x+=v.x;
-			p.y+=v.y;
+			playerVelocity.y*=0.95;
+			playerVelocity.x*=0.8;
+			playerCoords.x+=playerVelocity.x;
+			playerCoords.y+=playerVelocity.y;
 			pau=start?Math.floor((Date.now()-start)/100)/10:0;
 		}
 		fill('#000');
@@ -224,10 +240,10 @@ window.onload = _ => {
 			b[i].img();
 		}
 		fill('#FFF')
-		rect(-1,p.y+c.height/2+15,c.width+2,c.height/2+1)
-		rect(c.width/2-p.x-816,-1,c.width/2+1,c.height+2)
-		rect(c.width/2-p.x+515,-1,c.width/2+1,c.height+2)
-		drawChar(img,c.width/2,c.height/2,l)
+		rect(-1,playerCoords.y+c.height/2+15,c.width+2,c.height/2+1)
+		rect(c.width/2-playerCoords.x-816,-1,c.width/2+1,c.height+2)
+		rect(c.width/2-playerCoords.x+515,-1,c.width/2+1,c.height+2)
+		drawChar(player_costume,c.width/2,c.height/2,l)
 		fill('#0F0')
 		poly(0,0,100,50,c.width-100,50,c.width,0)
 		fill('#32C800')
@@ -252,17 +268,9 @@ window.onload = _ => {
 		rect(c.width-95,c.height/2-45,90,90,45)
 		fill(paused?'#cd38ff':'#32C800')
 		rect(c.width-70,c.height/2-20,40,40,20)
-		function poli(){
-			ctx.beginPath();
-			ctx.moveTo(arguments[0]+c.width-50,arguments[1]+c.height/2);
-			for(var i = 2; i < Math.floor(arguments.length/2)*2; i+=2){
-				ctx.lineTo(arguments[i]+c.width-50,arguments[i+1]+c.height/2);
-			}
-			ctx.closePath();
-			ctx.fill();
-		}
-		poli(28,22,35.5,1,0,0,11,33,-11,33,0,0,-28,22,-35.5,1,0,0,11,-33,28,-22,0,0,-11,-33,-28,-22,0,0);
-		poli(10,16,28,22,35.5,1,19,-7,28,-22,11,-33,0,-20,-11,-33,-28,-22,-19,-7,-35.5,1,-28,22,-10,16,-11,33,11,33)
+
+		translatedPoly(28,22,35.5,1,0,0,11,33,-11,33,0,0,-28,22,-35.5,1,0,0,11,-33,28,-22,0,0,-11,-33,-28,-22,0,0);
+		translatedPoly(10,16,28,22,35.5,1,19,-7,28,-22,11,-33,0,-20,-11,-33,-28,-22,-19,-7,-35.5,1,-28,22,-10,16,-11,33,11,33)
 		fill(paused?'#fff':'#000');
 		rect(c.width-62,c.height/2-12,24,24,12)
 		fill(paused?'#cd38ff':'#32C800');
@@ -284,7 +292,7 @@ window.onload = _ => {
 			fill('#808080');
 			if(invert)rect(153,153,10,10,5);
 			if(sneaky)rect(153,203,10,10,5);
-			for(var i in imgs)drawChar(imgs[i],120+i*50,c.height-70);
+			for(var i in unlockedCostumes)drawChar(unlockedCostumes[i],120+i*50,c.height-70);
 			if(clicked){
 				if(clickin===null){
 					if(150<mouse.x&&166>mouse.x&&!clickin){
@@ -297,7 +305,7 @@ window.onload = _ => {
 					}
 					//Allot a lot of lots to my parking lot.
 					if(c.height-55>mouse.y&&mouse.y>c.height-85){
-						for(var i in imgs){
+						for(var i in unlockedCostumes){
 							if(105+i*50<mouse.x&&mouse.x<135+i*50){
 								clickin=i;
 							}
@@ -314,9 +322,9 @@ window.onload = _ => {
 					clickin=null;
 				}
 				if(c.height-55>mouse.y&&mouse.y>c.height-85){
-					for(var i in imgs){
+					for(var i in unlockedCostumes){
 						if(105+i*50<mouse.x&&mouse.x<135+i*50){
-							img=imgs[i];
+							player_costume=unlockedCostumes[i];
 							clickin=null;
 						}
 					}

@@ -1,6 +1,10 @@
-function drawChar(a,x,y,z){
-	if(!z)z=0;
-	switch(a){
+/**
+ * This function draws the character to the global `ctx` object.
+ * Separate sprites out in the future
+ */
+function drawChar(sprite,x,y,eyePosition){
+	if(!eyePosition)eyePosition=0;
+	switch(sprite){
 		case 0:
 			fill('#F00');
 			rect(x-15,y-15,30,10);
@@ -8,8 +12,8 @@ function drawChar(a,x,y,z){
 			rect(x-15,y-15,30,30,9);
 			fill('#00F');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 3, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			fill('#000');
@@ -22,8 +26,8 @@ function drawChar(a,x,y,z){
 			rect(x-15,y-15,30,30,9);
 			fill('#FF0');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 3, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			fill('#FFF');
@@ -36,8 +40,8 @@ function drawChar(a,x,y,z){
 			rect(x-15,y-15,30,30,9);
 			fill('#000');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 3, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			fill('#000');
@@ -50,14 +54,14 @@ function drawChar(a,x,y,z){
 			rect(x-15,y-15,30,30,9);
 			fill('#fff');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 3, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			fill('#000');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 2, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 2, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 2, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 2, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			ctx.fillStyle=invert?'rgba(0,255,255,0.4)':'rgba(255,0,0,0.4)';
@@ -71,14 +75,14 @@ function drawChar(a,x,y,z){
 			rect(x-15,y-15,30,30,9);
 			fill('#000');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 3, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			fill('#000');
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 2, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 2, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 2, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 2, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			rect(x-7,y+4,14,5,2);
@@ -90,8 +94,8 @@ function drawChar(a,x,y,z){
 			rect(x-15,y-15,30,30,9);
 			fill('#00F');
 			ctx.beginPath();
-			ctx.arc(x-6-z, y+3, 3, 0, Math.PI*2);
-			ctx.arc(x+6-z, y+3, 3, 0, Math.PI*2);
+			ctx.arc(x-6-eyePosition, y+3, 3, 0, Math.PI*2);
+			ctx.arc(x+6-eyePosition, y+3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			fill('#000');
@@ -102,8 +106,8 @@ function drawChar(a,x,y,z){
 			rect(x-11,y-11,22,22)
 			fill('#f00')
 			ctx.beginPath();
-			ctx.arc(x-6+z, y-3, 3, 0, Math.PI*2);
-			ctx.arc(x+6+z, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x-6+eyePosition, y-3, 3, 0, Math.PI*2);
+			ctx.arc(x+6+eyePosition, y-3, 3, 0, Math.PI*2);
 			ctx.closePath();
 			ctx.fill();
 			rect(x-7,y+4,14,5,2);
