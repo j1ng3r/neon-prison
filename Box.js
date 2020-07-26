@@ -42,6 +42,7 @@ class Box {
 		this.bright = 255;
 		this.fake = false;
 		this.draw = a.t !== 'N';
+		let hex='0123456789abcdef';
 		this.img = this.type==='*'?
 			function(){
 				if(this.draw)drawChar(this.w,this.x+(c.width/2)-p.x,(c.height/2)+p.y-this.y);

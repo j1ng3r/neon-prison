@@ -119,7 +119,7 @@ function die(){
 	}
 	ab();
 }
-var hex='0123456789abcdef',keys=[],mouse={x:0,y:0},clicked=false,clickin=null;
+var keys=[],mouse={x:0,y:0},clicked=false,clickin=null;
 function posIn(a,b,c){for(c in b)if(b[c]===a)return c;return-1}
 function poly(){
 	ctx.beginPath();
