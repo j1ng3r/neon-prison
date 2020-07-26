@@ -1,4 +1,4 @@
-let c = null, ctx = null;
+let htmlCanvas = null, ctx = null;
 let time = 0;
 //These should get added into a Vector library
 let playerCoords = {x:0,y:0}, playerVelocity = {x:0,y:0};
@@ -13,7 +13,7 @@ function getUnlockedCostumes_as_ary(){
 document.cookie = "_d_=0";
 let unlockedCostumes=getUnlockedCostumes_as_ary();
 let start=0,pau=0,t,rsr=1,inside,left,right,up,down,player_costume=0,gained=0,paused=0,invert=!1,sneaky=!1, lvl = 1;
-function fill(color){
+function setFillStyleOrInvert(color){
 	ctx.fillStyle = color;
 	if(invert){
 		color = ctx.fillStyle;
@@ -33,7 +33,7 @@ function ab(c,d,e,f){
 	playerCoords={x:0, y:0};
 	playerVelocity={x:0, y:0};
 	b=[];
-	c=lvlinfo[lvl],e='',f={t:null,x:null,y:null,w:null,h:null};
+	c=levelData[lvl],e='',f={t:null,x:null,y:null,w:null,h:null};
 	for(d in c){
 		t=c[d].toString();
 		if(/-|\d/.test(c[d])){
@@ -61,7 +61,7 @@ function ab(c,d,e,f){
 		b.push(new Box({x:(-520),y:-1050,w:2000,h:1000,t:'D',m:{u:0.5}}));
 	}
 }
-function rect(x,y,w,h,r){
+function roundedRectangle(x,y,w,h,r){
 	if(typeof r === 'undefined'){
 		r=0;
 	}
@@ -75,7 +75,7 @@ function rect(x,y,w,h,r){
 	ctx.closePath();
 	ctx.fill();
 }
-var l = 1, lvlnm = ['',
+var l = 1, levelText = ['',
 	'Welcome to Neon Prison. You know the drill.\nHint: Red = Bad, Cyan = Win, valid keys are "wasdr\←\↑\→"',
 	'Some blocks are fake.\nIf you can\'t seem to stand on it, it probably doesn\'t exist.',
 	'Also, others are invisible.\nBe prepared to be trolled.',
@@ -88,7 +88,7 @@ var l = 1, lvlnm = ['',
 	'Tick tock, I\'m a clock\nFinally, some moving blocks!',
 	'You sneaky custard!\nI haven\'t gotten this far yet.'
 ],
-lvlinfo = ['',
+levelData = ['',
 	'-100,-15,5,155D-100,140,5,40E-100,180,5,1000D-400,-15,300,1000E-96,-15,40,40R56,-15,40,40R95,-15,300,350W-520,-20,10,10W-500,0,4,*',
 	'-415,-15,320,9001D35,-15,300,10D35,-15,10,40D45,15,50,10R-95,-15,60,10D-45,-15,10,40D-95,15,50,10F-95,137,120,3R25,137,70,3F35,175,70,10D35,175,10,40D45,205,50,10F-95,175,60,10D-45,175,10,40D-95,205,50,10R-25,327,120,3R-95,327,70,3F45,395,50,10F35,365,10,40D35,365,70,10D-95,365,60,10D-45,365,10,40D-95,395,50,10R-95,517,70,3F-25,517,130,3R95,-15,300,532D105,517,300,35D95,552,300,400D-5,650,10,30W-15,660,30,10W-10,655,20,20W111,536,7,*105,517,300,35D95,517,10,35E',
 	'-515,-20,100,1000R10,200,10,30F0,210,60,10F5,205,10,20F25,-15,500,100D-415,-15,390,100D25,85,35,5N-250,85,35,15N-415,130,5,600D-415,85,25,5N-415,95,10,3W',
@@ -138,16 +138,16 @@ function poly(...args){
 
 function translatedPoly(){
 	ctx.beginPath();
-	ctx.moveTo(arguments[0]+c.width-50,arguments[1]+c.height/2);
+	ctx.moveTo(arguments[0]+htmlCanvas.width-50,arguments[1]+htmlCanvas.height/2);
 	for(var i = 2; i < Math.floor(arguments.length/2)*2; i+=2){
-		ctx.lineTo(arguments[i]+c.width-50,arguments[i+1]+c.height/2);
+		ctx.lineTo(arguments[i]+htmlCanvas.width-50,arguments[i+1]+htmlCanvas.height/2);
 	}
 	ctx.closePath();
 	ctx.fill();
 }
 window.onload = _ => {
-	c = document.getElementById('c');
-	ctx = c.getContext("2d");
+	htmlCanvas = document.getElementById('c');
+	ctx = htmlCanvas.getContext("2d");
 	CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, lineHeight) {
 		text = text.split('\n');
 		for (var i = 0; i < text.length; i++) {
@@ -155,27 +155,27 @@ window.onload = _ => {
 			y += lineHeight;
 		}
 	};
-	c.onkeydown = function(evt){
+	htmlCanvas.onkeydown = function(evt){
 		keys[evt.keyCode||evt.which]=true;
 		console.log(evt.keyCode||evt.which);
 		evt.preventDefault();
 	}
-	c.onkeyup = function(evt){
+	htmlCanvas.onkeyup = function(evt){
 		keys[evt.keyCode||evt.which]=false;
 	}
-	c.addEventListener('mousedown', function(evt){
+	htmlCanvas.addEventListener('mousedown', function(evt){
 		mouse = {
-			x: evt.clientX - c.getBoundingClientRect().left,
-			y: evt.clientY - c.getBoundingClientRect().top
+			x: evt.clientX - htmlCanvas.getBoundingClientRect().left,
+			y: evt.clientY - htmlCanvas.getBoundingClientRect().top
 		}
 		clicked=1;
-		c.focus();
+		htmlCanvas.focus();
 		evt.preventDefault();
 	}, false);
-	c.addEventListener('mouseup', function(evt) {
+	htmlCanvas.addEventListener('mouseup', function(evt) {
 		mouse = {
-			x: evt.clientX - c.getBoundingClientRect().left,
-			y: evt.clientY - c.getBoundingClientRect().top
+			x: evt.clientX - htmlCanvas.getBoundingClientRect().left,
+			y: evt.clientY - htmlCanvas.getBoundingClientRect().top
 		}
 		clicked=0;
 	}, false);
@@ -234,65 +234,65 @@ window.onload = _ => {
 			playerCoords.y+=playerVelocity.y;
 			pau=start?Math.floor((Date.now()-start)/100)/10:0;
 		}
-		fill('#000');
-		rect(0,0,c.width,c.height);
+		setFillStyleOrInvert('#000');
+		roundedRectangle(0,0,htmlCanvas.width,htmlCanvas.height);
 		for(var i in b){
 			b[i].img();
 		}
-		fill('#FFF')
-		rect(-1,playerCoords.y+c.height/2+15,c.width+2,c.height/2+1)
-		rect(c.width/2-playerCoords.x-816,-1,c.width/2+1,c.height+2)
-		rect(c.width/2-playerCoords.x+515,-1,c.width/2+1,c.height+2)
-		drawChar(player_costume,c.width/2,c.height/2,l)
-		fill('#0F0')
-		poly(0,0,100,50,c.width-100,50,c.width,0)
-		fill('#32C800')
-		poly(0,0,100,50,100,c.height-50,0,c.height)
-		poly(c.width,0,c.width-100,50,c.width-100,c.height-50,c.width,c.height)
-		fill('#009600')
-		poly(0,c.height,100,c.height-50,c.width-100,c.height-50,c.width,c.height)
-		fill('#000')
+		setFillStyleOrInvert('#FFF')
+		roundedRectangle(-1,playerCoords.y+htmlCanvas.height/2+15,htmlCanvas.width+2,htmlCanvas.height/2+1)
+		roundedRectangle(htmlCanvas.width/2-playerCoords.x-816,-1,htmlCanvas.width/2+1,htmlCanvas.height+2)
+		roundedRectangle(htmlCanvas.width/2-playerCoords.x+515,-1,htmlCanvas.width/2+1,htmlCanvas.height+2)
+		drawChar(player_costume,htmlCanvas.width/2,htmlCanvas.height/2,l)
+		setFillStyleOrInvert('#0F0')
+		poly(0,0,100,50,htmlCanvas.width-100,50,htmlCanvas.width,0)
+		setFillStyleOrInvert('#32C800')
+		poly(0,0,100,50,100,htmlCanvas.height-50,0,htmlCanvas.height)
+		poly(htmlCanvas.width,0,htmlCanvas.width-100,50,htmlCanvas.width-100,htmlCanvas.height-50,htmlCanvas.width,htmlCanvas.height)
+		setFillStyleOrInvert('#009600')
+		poly(0,htmlCanvas.height,100,htmlCanvas.height-50,htmlCanvas.width-100,htmlCanvas.height-50,htmlCanvas.width,htmlCanvas.height)
+		setFillStyleOrInvert('#000')
 		ctx.font = '30px Monospace';
-		ctx.fillText('Neon Prison',c.width/2,35)
+		ctx.fillText('Neon Prison',htmlCanvas.width/2,35)
 		ctx.font = '25px Monospace';
 		var qwer = -75;
-		ctx.fillText('Level:',50,c.height/2+qwer)
-		ctx.fillText(lvl,50,c.height/2+qwer+30)
-		ctx.fillText('Deaths:',50,c.height/2+80+qwer)
-		ctx.fillText(deaths,50,c.height/2+110+qwer)
-		ctx.fillText('Time:',50,c.height/2+160+qwer)
-		ctx.fillText(pau,50,c.height/2+190+qwer)
+		ctx.fillText('Level:',50,htmlCanvas.height/2+qwer)
+		ctx.fillText(lvl,50,htmlCanvas.height/2+qwer+30)
+		ctx.fillText('Deaths:',50,htmlCanvas.height/2+80+qwer)
+		ctx.fillText(deaths,50,htmlCanvas.height/2+110+qwer)
+		ctx.fillText('Time:',50,htmlCanvas.height/2+160+qwer)
+		ctx.fillText(pau,50,htmlCanvas.height/2+190+qwer)
 		ctx.font = '15px Monospace';
-		ctx.wrapText(lvl===lvlnm.length-1&&deaths>0?'You not-so-sneaky custard!\nI haven\'t gotten this far yet.':lvlnm[lvl],c.width/2,c.height-27,20000,18);
-		fill(paused?'#fff':'#000')
-		rect(c.width-95,c.height/2-45,90,90,45)
-		fill(paused?'#cd38ff':'#32C800')
-		rect(c.width-70,c.height/2-20,40,40,20)
+		ctx.wrapText(lvl===levelText.length-1&&deaths>0?'You not-so-sneaky custard!\nI haven\'t gotten this far yet.':levelText[lvl],htmlCanvas.width/2,htmlCanvas.height-27,20000,18);
+		setFillStyleOrInvert(paused?'#fff':'#000')
+		roundedRectangle(htmlCanvas.width-95,htmlCanvas.height/2-45,90,90,45)
+		setFillStyleOrInvert(paused?'#cd38ff':'#32C800')
+		roundedRectangle(htmlCanvas.width-70,htmlCanvas.height/2-20,40,40,20)
 
 		translatedPoly(28,22,35.5,1,0,0,11,33,-11,33,0,0,-28,22,-35.5,1,0,0,11,-33,28,-22,0,0,-11,-33,-28,-22,0,0);
 		translatedPoly(10,16,28,22,35.5,1,19,-7,28,-22,11,-33,0,-20,-11,-33,-28,-22,-19,-7,-35.5,1,-28,22,-10,16,-11,33,11,33)
-		fill(paused?'#fff':'#000');
-		rect(c.width-62,c.height/2-12,24,24,12)
-		fill(paused?'#cd38ff':'#32C800');
-		rect(c.width-55,c.height/2-5,10,10,5)
+		setFillStyleOrInvert(paused?'#fff':'#000');
+		roundedRectangle(htmlCanvas.width-62,htmlCanvas.height/2-12,24,24,12)
+		setFillStyleOrInvert(paused?'#cd38ff':'#32C800');
+		roundedRectangle(htmlCanvas.width-55,htmlCanvas.height/2-5,10,10,5)
 		if(paused){
 			if(invert){ctx.fillStyle='rgba(255,255,255,0.25)'}else{ctx.fillStyle='rgba(0,0,0,0.25)'}
-			rect(100,50,c.width-200,c.height-100);
-			fill('#fff');
+			roundedRectangle(100,50,htmlCanvas.width-200,htmlCanvas.height-100);
+			setFillStyleOrInvert('#fff');
 			ctx.font = '30px Monospace';
-			ctx.fillText('Settings',c.width/2,100);
-			rect(150,150,16,16,3);
-			rect(150,200,16,16,3);
+			ctx.fillText('Settings',htmlCanvas.width/2,100);
+			roundedRectangle(150,150,16,16,3);
+			roundedRectangle(150,200,16,16,3);
 			ctx.font = '24px Monospace';
 			ctx.textAlign = 'left';
 			ctx.fillText('Invert colors',180,166);
 			ctx.fillText('Sneaky Custard Mode',180,216);
 			ctx.textAlign = 'center';
-			ctx.fillText('Choose your character',c.width/2,c.height-100)
-			fill('#808080');
-			if(invert)rect(153,153,10,10,5);
-			if(sneaky)rect(153,203,10,10,5);
-			for(var i in unlockedCostumes)drawChar(unlockedCostumes[i],120+i*50,c.height-70);
+			ctx.fillText('Choose your character',htmlCanvas.width/2,htmlCanvas.height-100)
+			setFillStyleOrInvert('#808080');
+			if(invert)roundedRectangle(153,153,10,10,5);
+			if(sneaky)roundedRectangle(153,203,10,10,5);
+			for(var i in unlockedCostumes)drawChar(unlockedCostumes[i],120+i*50,htmlCanvas.height-70);
 			if(clicked){
 				if(clickin===null){
 					if(150<mouse.x&&166>mouse.x&&!clickin){
@@ -304,7 +304,7 @@ window.onload = _ => {
 						}
 					}
 					//Allot a lot of lots to my parking lot.
-					if(c.height-55>mouse.y&&mouse.y>c.height-85){
+					if(htmlCanvas.height-55>mouse.y&&mouse.y>htmlCanvas.height-85){
 						for(var i in unlockedCostumes){
 							if(105+i*50<mouse.x&&mouse.x<135+i*50){
 								clickin=i;
@@ -321,7 +321,7 @@ window.onload = _ => {
 					invert=!invert;
 					clickin=null;
 				}
-				if(c.height-55>mouse.y&&mouse.y>c.height-85){
+				if(htmlCanvas.height-55>mouse.y&&mouse.y>htmlCanvas.height-85){
 					for(var i in unlockedCostumes){
 						if(105+i*50<mouse.x&&mouse.x<135+i*50){
 							player_costume=unlockedCostumes[i];
@@ -332,11 +332,11 @@ window.onload = _ => {
 			}
 		}
 		if(clicked){
-			if(2025>((mouse.x-c.width+50)*(mouse.x-c.width+50)+(mouse.y-c.height/2)*(mouse.y-c.height/2))&&!clickin){
+			if(2025>((mouse.x-htmlCanvas.width+50)*(mouse.x-htmlCanvas.width+50)+(mouse.y-htmlCanvas.height/2)*(mouse.y-htmlCanvas.height/2))&&!clickin){
 				clickin='button';
 			}
 		} else {
-			if(2025>((mouse.x-c.width+50)*(mouse.x-c.width+50)+(mouse.y-c.height/2)*(mouse.y-c.height/2))&&clickin==='button'){
+			if(2025>((mouse.x-htmlCanvas.width+50)*(mouse.x-htmlCanvas.width+50)+(mouse.y-htmlCanvas.height/2)*(mouse.y-htmlCanvas.height/2))&&clickin==='button'){
 				paused=!paused;
 				start=Date.now()-pau*1000;
 			}
