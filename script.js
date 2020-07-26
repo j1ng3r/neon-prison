@@ -1,7 +1,7 @@
 let c = null, ctx = null;
 let time = 0;
 //These should get added into a Vector library
-let playerCoords = {x:0,y:0}, playerVelocity = {x:0,y:0};
+let playerCoords = new Vector(0,0), playerVelocity = new Vector(0,0);
 function setCostumes(ary_unlockedCostumes){
 	let c = ary_unlockedCostumes.filter((v,i,m)=>m.indexOf(v)===i).reduce((a,v) => a + 2**v, 0).toString(36);
 	document.cookie=`_d_=${c};`
