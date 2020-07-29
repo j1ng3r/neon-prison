@@ -1,0 +1,10 @@
+{
+	"Vector" : [],
+	"Canvas" : ["Vector"],
+	"drawChar" : ["Canvas"],
+	"Player" : ["Vector"],
+	"Box" : ["Vector", "Canvas", "Player"],
+	"Level" : ["Vector", "Canvas", "Box", "Player"]
+	"Script" : ["Vector", "Canvas", "drawChar", "Box", "Level"],
+	"Camera" : [...]
+}
