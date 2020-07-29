@@ -1,4 +1,3 @@
-
 /* A few comments
 	D=die
 	R=regular
@@ -14,7 +13,7 @@
 	T=bounce jumpblock
 	*=New character {x,y,size,number (0 is default)}
 */
-class Box{
+class Box {
 	constructor(a){
 		this.position = new Vector(a.x,a.y);
 		this.bx = a.x;

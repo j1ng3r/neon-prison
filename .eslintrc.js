@@ -70,7 +70,7 @@ module.exports = {
 		"no-use-before-define":2,
 		// style
 		"comma-dangle":[2,"never"],
-		"comma-spacing":[2,noSpace],
+		// "comma-spacing":[2,noSpace],
 		"comma-style":2,
 		"computed-property-spacing":2,
 		"consistent-this":[1,"that"],
@@ -97,7 +97,7 @@ module.exports = {
 		semi:2,
 		"semi-spacing":2,
 		"semi-style":2,
-		"space-before-blocks":[2,"never"],
+		// "space-before-blocks":[2,"never"],
 		"space-before-function-paren":[2,"never"],
 		"space-in-parens":2,
 		"space-unary-ops":[2,{words:true,nonwords:false}],
