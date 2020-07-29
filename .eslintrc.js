@@ -79,7 +79,7 @@ module.exports = {
 		"func-style":[1,"declaration",{allowArrowFunctions:true}],
 		indent:["error","tab",{SwitchCase:1}],
 		"key-spacing":[2,{beforeColon:false,afterColon:false}],
-		"keyword-spacing":[2,noSpace],
+		// "keyword-spacing":[2,noSpace],
 		"linebreak-style":2,
 		"no-array-constructor":2,
 		"no-lonely-if":1,
