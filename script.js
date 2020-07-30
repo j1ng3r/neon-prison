@@ -70,7 +70,7 @@ if (!globals.unlockedCostumes.length) {
 }
 globals.alabastorBalkans();
 let playerEyePosition = 0;
-setInterval(() => {
+function update(){
 	if (!paused) {
 		if (globals.keys[83]) { globals.die(); }
 		if (globals.keys[82] && rsr) {
@@ -126,10 +126,10 @@ setInterval(() => {
 		globals.b[i].img();
 	}
 	globals.canvas.fillStyle("#FFF");
-	globals.canvas.rect([0, globals.playerCoords.y + globals.canvas.size.y / 2 + 15], globals.canvas.size.scale(1));
-	globals.canvas.rect([ - globals.playerCoords.x - 515, -1], globals.canvas.size.scaleXY(0.5, 1));
-	globals.canvas.rect([globals.canvas.size.x / 2 - globals.playerCoords.x + 515, -1], globals.canvas.size.scale(1));
-	globals.drawChar(player_costume, globals.canvas.size.x / 2, globals.canvas.size.y / 2, playerEyePosition);
+	globals.canvas.rect([0, Math.round(globals.playerCoords.y) + globals.canvas.size.y / 2 + 15], globals.canvas.size.scale(1));
+	globals.canvas.rect([ - Math.round(globals.playerCoords.x) - 515, -1], globals.canvas.size.scaleXY(0.5, 1));
+	globals.canvas.rect([globals.canvas.size.x / 2 - Math.round(globals.playerCoords.x) + 515, -1], globals.canvas.size.scale(1));
+	globals.drawChar(player_costume, globals.canvas.size.scale(0.5), playerEyePosition);
 	globals.canvas.fillStyle("#32C800");
 	globals.canvas.rect([0, 0], [100, globals.canvas.size.y]);
 	globals.canvas.rect([globals.canvas.size.x - 100, 0], [100, globals.canvas.size.y]);
@@ -167,7 +167,7 @@ setInterval(() => {
 		globals.canvas.font("30px Monospace");
 		globals.canvas.text("Settings", [globals.canvas.size.x / 2, 100]);
 		globals.canvas.roundedRect([150, 150], [16, 16], 3);
-		globals.cavnas.roundedRect([150, 200], [16, 16], 3);
+		globals.canvas.roundedRect([150, 200], [16, 16], 3);
 		globals.canvas.font("24px Monospace");
 		globals.canvas.ctx.textAlign = "left";
 		globals.canvas.text("Invert colors", [180, 166]);
@@ -178,7 +178,7 @@ setInterval(() => {
 		if (globals.invert) { globals.canvas.roundedRect([153, 153], [10, 10], 5); }
 		if (globals.sneaky) { globals.canvas.roundedRect([153, 203], [10, 10], 5); }
 		for (let i in globals.unlockedCostumes) { 
-			globals.drawChar(globals.unlockedCostumes[i], 120 + i * 50, globals.canvas.size.y - 70);
+			globals.drawChar(globals.unlockedCostumes[i], [120 + i * 50, globals.canvas.size.y - 70]);
 		}
 		if (clicked) {
 			if (clickin === null) {
@@ -229,4 +229,9 @@ setInterval(() => {
 		}
 		clickin = null;
 	}
-}, 17);
+}
+function animator(){
+	update();
+	requestAnimationFrame(animator);
+}
+animator();

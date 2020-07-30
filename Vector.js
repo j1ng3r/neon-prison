@@ -19,6 +19,9 @@ export default class Vector {
 	static isVector(v) {
 		return v instanceof Vector;
 	}
+	round() {
+		return new Vector(Math.round(this.x), Math.round(this.y));
+	}
 	add(...args) {
 		let vector = new Vector(...args);
 		return new Vector(this.x + vector.x, this.y + vector.y);

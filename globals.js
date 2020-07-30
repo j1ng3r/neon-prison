@@ -63,8 +63,10 @@ globals.levelData = [
 globals.b;
 globals.t;
 
-globals.drawChar = function drawChar(sprite, x, y, eyePosition) {
+globals.drawChar = function drawChar(sprite, position, eyePosition) {
 	if(!eyePosition) { eyePosition = 0; }
+	position = new Vector(position);
+	let x = position.x, y = position.y;
 	switch(sprite) {
 		case 0:
 			globals.canvas.fillStyle("#F00");
@@ -351,7 +353,7 @@ class Box {
 	img() {
 		if(this.type === "*") {
 			if(this.draw) {
-				globals.drawChar(this.w, this.position.x + (globals.canvas.size.x / 2) - globals.playerCoords.x, (globals.canvas.size.y / 2) + globals.playerCoords.y - this.position.y);
+				globals.drawChar(this.w, this.position.subtract(globals.playerCoords.round()).invertY().add(globals.canvas.size.scale(0.5)));
 			}
 		} else {
 			if(this.fake) {
@@ -360,12 +362,9 @@ class Box {
 				this.col = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
 				this.col = `#${this.col}${this.type == "F" ? (this.col + this.col) : "0000"}`;
 			}
-			Vector.debug = true;
-			this.position.subtract(globals.playerCoords);
-			Vector.debug = false;
 			globals.canvas.fillStyle(this.col);
 			if(this.draw) {
-				globals.canvas.rect(this.position.subtract(globals.playerCoords).invertY()
+				globals.canvas.rect(this.position.subtract(globals.playerCoords.round()).invertY()
 					.add(globals.canvas.size.scale(0.5)), this.size.invertY());
 			}
 		}
