@@ -1,22 +1,31 @@
 export default class Vector {
 	constructor(x, y) {
-		this.x = x;
-		this.y = y;
+		if(Vector.isVector(x)) {
+			this.x = x.x;
+			this.y = x.y;
+		} else if(Array.isArray(x)) {
+			this.x = x[0];
+			this.y = x[1];
+		} else {
+			this.x = x;
+			this.y = y;
+		}
+	}
+	static log(...args) {
+		if(Vector.debug) {
+			console.log(...args);
+		}
 	}
 	static isVector(v) {
 		return v instanceof Vector;
 	}
-	add(x, y) {
-		if (Vector.isVector(x)) {
-			return new Vector(this.x + x.x, this.y + x.y);
-		}
-		return new Vector(this.x + x, this.y + y);
+	add(...args) {
+		let vector = new Vector(...args);
+		return new Vector(this.x + vector.x, this.y + vector.y);
 	}
-	subtract(x, y) {
-		if (Vector.isVector(x)) {
-			return new Vector(this.x - x.x, this.y - x.y);
-		}
-		return new Vector(this.x - x, this.y - y);
+	subtract(...args) {
+		let vector = new Vector(...args);
+		return new Vector(this.x - vector.x, this.y - vector.y);
 	}
 	scale(scalar) {
 		return new Vector(scalar * this.x, scalar * this.y);
@@ -24,4 +33,9 @@ export default class Vector {
 	scaleXY(scalar_x, scalar_y) {
 		return new Vector(scalar_x * this.x, scalar_y * this.y);
 	}
+	invertY() {
+		return new Vector(this.x, - this.y);
+	}
 }
+
+Vector.debug = false;

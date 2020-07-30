@@ -1,43 +1,14 @@
 import Vector from "./Vector.js";
+import Canvas from "./Canvas.js";
 
 /** Global Variables :stevenson: */
 const globals = {};
 
-globals.htmlCanvas = null;
-globals.ctx = null;
+globals.canvas = new Canvas();
 globals.playerCoords = new Vector(0, 0);
 globals.playerVelocity = new Vector(0, 0);
 globals.time = 0;
 globals.invert = false;
-
-globals.setFillStyleOrInvert = function setFillStyleOrInvert(color) {
-	globals.ctx.fillStyle = color;
-	if(globals.invert) {
-		color = globals.ctx.fillStyle;
-		console.log(color);
-		if(color.length == 9) {
-			globals.ctx.fillStyle = `#${(0xFFFFFFFF ^ parseInt(color.slice(1), 16)).toString(16).padStart(8, "0")}`;
-		}else{
-			globals.ctx.fillStyle = `#${(0xFFFFFF ^ parseInt(color.slice(1), 16)).toString(16).padStart(6, "0")}`;
-			console.log("Fill: ", globals.ctx.fillStyle);
-		}
-	}
-};
-
-globals.roundedRectangle = function roundedRectangle(x, y, w, h, r) {
-	if(typeof r === "undefined") {
-		r = 0;
-	}
-	globals.ctx.fillRect(x + r, y, w - r - r, h);
-	globals.ctx.fillRect(x, y + r, w, h - r - r);
-	globals.ctx.beginPath();
-	globals.ctx.arc(x + r, y + r, r, 0, Math.PI * 2);
-	globals.ctx.arc(x + w - r, y + r, r, 0, Math.PI * 2);
-	globals.ctx.arc(x + w - r, y + h - r, r, 0, Math.PI * 2);
-	globals.ctx.arc(x + r, y + h - r, r, 0, Math.PI * 2);
-	globals.ctx.closePath();
-	globals.ctx.fill();
-};
 
 globals.setCostumes = function setCostumes(ary_unlockedCostumes) {
 	const c = ary_unlockedCostumes.filter((v, i, m) => m.indexOf(v) === i).reduce((a, v) => a + 2 ** v, 0).toString(36);
@@ -55,7 +26,6 @@ globals.left;
 globals.right;
 globals.up;
 globals.down;
-globals.l = 1;
 
 /**
  * Poly takes a list of argument pairs.
@@ -63,15 +33,6 @@ globals.l = 1;
  * It fills it at the end.
  * It doesn't change any ctx styles which
  */
-globals.poly = function poly(...args) {
-	globals.ctx.beginPath();
-	globals.ctx.moveTo(args[0], args[1]);
-	for(let i = 2; i < Math.floor(args.length / 2) * 2; i += 2) {
-		globals.ctx.lineTo(args[i], args[i + 1]);
-	}
-	globals.ctx.closePath();
-	globals.ctx.fill();
-};
 globals.standing = true;
 globals.gained = 0;
 globals.deaths = 0;
@@ -106,157 +67,142 @@ globals.drawChar = function drawChar(sprite, x, y, eyePosition) {
 	if(!eyePosition) { eyePosition = 0; }
 	switch(sprite) {
 		case 0:
-			globals.setFillStyleOrInvert("#F00");
-			globals.roundedRectangle(x - 15, y - 15, 30, 10);
-			globals.setFillStyleOrInvert("#FF0");
-			globals.roundedRectangle(x - 15, y - 15, 30, 30, 9);
-			globals.setFillStyleOrInvert("#00F");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.setFillStyleOrInvert("#000");
-			globals.roundedRectangle(x - 7, y + 4, 14, 5, 2);
-			return;
+			globals.canvas.fillStyle("#F00");
+			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.fillStyle("#FF0");
+			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
+			globals.canvas.fillStyle("#00F");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.roundedRect([x - 7, y + 4], [14, 5], 2);
+			break;
 		case 1:
-			globals.setFillStyleOrInvert("#0FF");
-			globals.roundedRectangle(x - 15, y - 15, 30, 10);
-			globals.setFillStyleOrInvert("#00F");
-			globals.roundedRectangle(x - 15, y - 15, 30, 30, 9);
-			globals.setFillStyleOrInvert("#FF0");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.setFillStyleOrInvert("#FFF");
-			globals.roundedRectangle(x - 7, y + 4, 14, 5, 2);
+			globals.canvas.fillStyle("#0FF");
+			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.fillStyle("#00F");
+			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
+			globals.canvas.fillStyle("#FF0");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.fillStyle("#FFF");
+			globals.canvas.roundedRect([x - 7, y + 4], [14, 5], 2);
 			return;
 		case 2:
-			globals.setFillStyleOrInvert("#FFF");
-			globals.roundedRectangle(x - 15, y - 15, 30, 10);
-			globals.setFillStyleOrInvert("#F00");
-			globals.roundedRectangle(x - 15, y - 15, 30, 30, 9);
-			globals.setFillStyleOrInvert("#000");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.setFillStyleOrInvert("#000");
-			globals.roundedRectangle(x - 7, y + 4, 14, 5, 2);
+			globals.canvas.fillStyle("#FFF");
+			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.fillStyle("#F00");
+			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.roundedRect([x - 7, y + 4], [14, 5], 2);
 			return;
 		case 3:
-			globals.setFillStyleOrInvert("#000");
-			globals.roundedRectangle(x - 15, y - 15, 30, 10);
-			globals.ctx.fillStyle = "#888";
-			globals.roundedRectangle(x - 15, y - 15, 30, 30, 9);
-			globals.setFillStyleOrInvert("#fff");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.setFillStyleOrInvert("#000");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 2, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 2, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.ctx.fillStyle = globals.invert ? "rgba(0,255,255,0.4)" : "rgba(255,0,0,0.4)";
-			globals.roundedRectangle(x - 7, y + 4, 14, 5, 2);
-			globals.poly(x + 13, y + 2, x + 8, y + 10, x + 8, y + 11, x + 13, y + 3);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.fillStyle("#888");
+			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
+			globals.canvas.fillStyle("#fff");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 2);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 2);
+			globals.canvas.ctx.fillStyle = globals.canvas.colorsInverted ? "rgba(0,255,255,0.4)" : "rgba(255,0,0,0.4)";
+			globals.canvas.roundedRect([x - 7, y + 4], [14, 5], 2);
+			globals.canvas.polygon([x + 13, y + 2], [x + 8, y + 10], [x + 8, y + 11], [x + 13, y + 3]);
 			return;
 		case 4:
-			globals.setFillStyleOrInvert("#fff");
-			globals.roundedRectangle(x - 15, y - 15, 30, 10);
-			globals.setFillStyleOrInvert("#fff");
-			globals.roundedRectangle(x - 15, y - 15, 30, 30, 9);
-			globals.setFillStyleOrInvert("#000");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.setFillStyleOrInvert("#000");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 2, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 2, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.roundedRectangle(x - 7, y + 4, 14, 5, 2);
+			globals.canvas.fillStyle("#fff");
+			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.fillStyle("#fff");
+			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.roundedRect([x - 7, y + 4], [14, 5], 2);
 			return;
 		case 5:
-			globals.setFillStyleOrInvert("#F00");
-			globals.roundedRectangle(x - 15, y + 5, 30, 10);
-			globals.setFillStyleOrInvert("#FF0");
-			globals.roundedRectangle(x - 15, y - 15, 30, 30, 9);
-			globals.setFillStyleOrInvert("#00F");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 - eyePosition, y + 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 - eyePosition, y + 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.setFillStyleOrInvert("#000");
-			globals.roundedRectangle(x - 7, y - 9, 14, 5, 2);
+			globals.canvas.fillStyle("#F00");
+			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.fillStyle("#FF0");
+			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
+			globals.canvas.fillStyle("#00F");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.roundedRect([x - 7, y - 9], [14, 5], 2);
 			return;
 		case 6:
-			globals.setFillStyleOrInvert("#000");
-			globals.roundedRectangle(x - 11, y - 11, 22, 22);
-			globals.setFillStyleOrInvert("#f00");
-			globals.ctx.beginPath();
-			globals.ctx.arc(x - 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.arc(x + 6 + eyePosition, y - 3, 3, 0, Math.PI * 2);
-			globals.ctx.closePath();
-			globals.ctx.fill();
-			globals.roundedRectangle(x - 7, y + 4, 14, 5, 2);
-			globals.setFillStyleOrInvert("#666");
-			globals.roundedRectangle(x - 15, y - 15, 4, 30);
-			globals.roundedRectangle(x - 15, y - 15, 30, 4);
-			globals.roundedRectangle(x + 11, y - 15, 4, 30);
-			globals.roundedRectangle(x - 15, y + 11, 30, 4);
-			globals.roundedRectangle(x - 11, y - 7, 22, 4);
-			globals.roundedRectangle(x - 11, y + 3, 22, 4);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.rect([x - 11, y - 11], [22, 22]);
+			globals.canvas.fillStyle("#f00");
+			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.roundedRect([x - 7, y + 4], [14, 5], 2);
+			globals.canvas.fillStyle("#666");
+			globals.canvas.rect([x - 15, y - 15], [4, 30]);
+			globals.canvas.rect([x - 15, y - 15], [30, 4]);
+			globals.canvas.rect([x + 11, y - 15], [4, 30]);
+			globals.canvas.rect([x - 15, y + 11], [30, 4]);
+			globals.canvas.rect([x - 11, y - 7], [22, 4]);
+			globals.canvas.rect([x - 11, y + 3], [22, 4]);
 			return;
 		case 7:
-			globals.setFillStyleOrInvert("#f00");
-			globals.roundedRectangle(x - 10, y - 14, 20, 30);
-			globals.roundedRectangle(x - 6, y - 16, 12, 4);
-			globals.roundedRectangle(x - 12, y - 12, 24, 26);
-			globals.roundedRectangle(x - 14, y - 10, 28, 20);
-			globals.roundedRectangle(x - 16, y - 6, 32, 14);
-			globals.setFillStyleOrInvert("#000");
-			globals.roundedRectangle(x - 8, y - 12, 16, 26);
-			globals.roundedRectangle(x - 4, y - 14, 8, 20);
-			globals.roundedRectangle(x - 10, y - 6, 20, 18);
-			globals.roundedRectangle(x - 8, y - 12, 16, 26);
-			globals.roundedRectangle(x - 14, y - 4, 28, 6);
-			globals.roundedRectangle(x - 12, y - 8, 24, 4);
-			globals.setFillStyleOrInvert("#00f");
-			globals.roundedRectangle(x - 2, y - 14, 4, 8);
-			globals.roundedRectangle(x - 4, y - 10, 8, 4);
-			globals.roundedRectangle(x + 4, y - 8, 4, 4);
-			globals.roundedRectangle(x - 8, y - 8, 4, 4);
-			globals.roundedRectangle(x - 10, y - 10, 2, 4);
-			globals.roundedRectangle(x + 8, y - 10, 2, 4);
-			globals.roundedRectangle(x + 6, y - 4, 2, 4);
-			globals.roundedRectangle(x + 6, y, 4, 4);
-			globals.roundedRectangle(x + 10, y + 2, 4, 4);
-			globals.roundedRectangle(x + 4, y + 2, 2, 2);
-			globals.roundedRectangle(x - 8, y - 4, 2, 4);
-			globals.roundedRectangle(x - 10, y, 4, 4);
-			globals.roundedRectangle(x - 14, y + 2, 4, 4);
-			globals.roundedRectangle(x - 6, y + 2, 2, 2);
-			globals.setFillStyleOrInvert("#f00");
-			globals.roundedRectangle(x - 10, y + 4, 2, 4);
-			globals.roundedRectangle(x + 8, y + 4, 2, 4);
-			globals.roundedRectangle(x - 10, y + 4, 20, 2);
-			globals.roundedRectangle(x - 4 + globals.l, y + 6, 2, 4);
-			globals.roundedRectangle(x + 2 + globals.l, y + 6, 2, 4);
+			globals.canvas.fillStyle("#f00");
+			globals.canvas.rect([x - 10, y - 14], [20, 30]);
+			globals.canvas.rect([x - 6, y - 16], [12, 4]);
+			globals.canvas.rect([x - 12, y - 12], [24, 26]);
+			globals.canvas.rect([x - 14, y - 10], [28, 20]);
+			globals.canvas.rect([x - 16, y - 6], [32, 14]);
+			globals.canvas.fillStyle("#000");
+			globals.canvas.rect([x - 8, y - 12], [16, 26]);
+			globals.canvas.rect([x - 4, y - 14], [8, 20]);
+			globals.canvas.rect([x - 10, y - 6], [20, 18]);
+			globals.canvas.rect([x - 8, y - 12], [16, 26]);
+			globals.canvas.rect([x - 14, y - 4], [28, 6]);
+			globals.canvas.rect([x - 12, y - 8], [24, 4]);
+			globals.canvas.fillStyle("#00f");
+			globals.canvas.rect([x - 2, y - 14], [4, 8]);
+			globals.canvas.rect([x - 4, y - 10], [8, 4]);
+			globals.canvas.rect([x + 4, y - 8], [4, 4]);
+			globals.canvas.rect([x - 8, y - 8], [4, 4]);
+			globals.canvas.rect([x - 10, y - 10], [2, 4]);
+			globals.canvas.rect([x + 8, y - 10], [2, 4]);
+			globals.canvas.rect([x + 6, y - 4], [2, 4]);
+			globals.canvas.rect([x + 6, y], [4, 4]);
+			globals.canvas.rect([x + 10, y + 2], [4, 4]);
+			globals.canvas.rect([x + 4, y + 2], [2, 2]);
+			globals.canvas.rect([x - 8, y - 4], [2, 4]);
+			globals.canvas.rect([x - 10, y], [4, 4]);
+			globals.canvas.rect([x - 14, y + 2], [4, 4]);
+			globals.canvas.rect([x - 6, y + 2], [2, 2]);
+			globals.canvas.fillStyle("#f00");
+			globals.canvas.rect([x - 10, y + 4], [2, 4]);
+			globals.canvas.rect([x + 8, y + 4], [2, 4]);
+			globals.canvas.rect([x - 10, y + 4], [20, 2]);
+			globals.canvas.rect([x - 4 + eyePosition, y + 6], [2, 4]);
+			globals.canvas.rect([x + 2 + eyePosition, y + 6], [2, 4]);
 	}
 };
 
+/* A few comments
+   D=die
+   R=regular
+   N=invisible
+   F=fake
+   W=win
+   B=bounce
+   U=slowstone
+   V=quicksand
+   A=jumpblock
+   S=fallblock
+   E=fake death
+   T=bounce jumpblock
+   *=New character {x,y,size,number (0 is default)}
+*/
 class Box {
 	constructor(a) {
 		this.position = new Vector(a.x, a.y);
@@ -264,6 +210,7 @@ class Box {
 		this.by = a.y;
 		this.w = a.w;
 		this.h = a.h;
+		this.size = new Vector(a.w, a.h);
 		this.type = a.t;
 		if(a.m) {
 			this.move = {Up:(a.m.u || 0), Right:(a.m.r || 0), YSin:(a.m.y || 0), XSin:(a.m.x || 0)};
@@ -274,26 +221,6 @@ class Box {
 		this.bright = 255;
 		this.fake = false;
 		this.draw = a.t !== "N";
-		const hex = "0123456789abcdef";
-		this.img = this.type === "*"
-			? function() {
-				if(this.draw) { globals.drawChar(this.w, this.position.x + (globals.htmlCanvas.width / 2) - globals.playerCoords.x, (globals.htmlCanvas.height / 2) + globals.playerCoords.y - this.position.y); }
-			}
-			: function() {
-				if(this.fake) {
-					this.bright -= (this.bright >= 100);
-					this.col = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
-					this.col = `#${this.col}${this.type == "F" ? (this.col + this.col) : "0000"}`;
-				}
-				globals.setFillStyleOrInvert(this.col);
-				if(this.draw) {
-					globals.roundedRectangle(
-						this.position.x + (globals.htmlCanvas.width / 2) - globals.playerCoords.x,
-						(globals.htmlCanvas.height / 2) + globals.playerCoords.y - this.position.y,
-						this.w, 0 - this.h
-					);
-				}
-			};
 	}
 	sense() {
 		this.bx += this.move.Right;
@@ -421,6 +348,28 @@ class Box {
 			}
 		}
 	}
+	img() {
+		if(this.type === "*") {
+			if(this.draw) {
+				globals.drawChar(this.w, this.position.x + (globals.canvas.size.x / 2) - globals.playerCoords.x, (globals.canvas.size.y / 2) + globals.playerCoords.y - this.position.y);
+			}
+		} else {
+			if(this.fake) {
+				const hex = "0123456789abcdef";
+				this.bright -= (this.bright >= 100);
+				this.col = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
+				this.col = `#${this.col}${this.type == "F" ? (this.col + this.col) : "0000"}`;
+			}
+			Vector.debug = true;
+			this.position.subtract(globals.playerCoords);
+			Vector.debug = false;
+			globals.canvas.fillStyle(this.col);
+			if(this.draw) {
+				globals.canvas.rect(this.position.subtract(globals.playerCoords).invertY()
+					.add(globals.canvas.size.scale(0.5)), this.size.invertY());
+			}
+		}
+	}
 }
 
 Box.colors = {
@@ -441,8 +390,8 @@ Box.colors = {
 globals.alabastorBalkans = function alabastorBalkans(c, d, e, f) {
 	globals.time = new Date().getTime();
 	globals.gained = 0;
-	globals.playerCoords = {x:0, y:0};
-	globals.playerVelocity = {x:0, y:0};
+	globals.playerCoords = new Vector(0, 0);
+	globals.playerVelocity = new Vector(0, 0);
 	globals.b = [];
 	c = globals.levelData[globals.lvl], e = "", f = {t:null, x:null, y:null, w:null, h:null};
 	for(d in c) {

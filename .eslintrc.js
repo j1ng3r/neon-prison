@@ -100,7 +100,7 @@ module.exports = {
 		// "space-before-blocks":[2,"never"],
 		"space-before-function-paren":[2,"never"],
 		"space-in-parens":2,
-		"space-unary-ops":[2,{words:true,nonwords:false}],
+		// "space-unary-ops":[2,{words:true,nonwords:false}],
 		"spaced-comment":2,
 		"switch-colon-spacing":[2,noSpace],
 		// es6
