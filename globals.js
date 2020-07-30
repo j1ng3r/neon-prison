@@ -22,10 +22,6 @@ globals.getUnlockedCostumes_as_ary = function getUnlockedCostumes_as_ary() {
 	return parseInt(cookie.slice(4), 36).toString(2).split("").map((v, i) => +v ? i : -1).filter(i => i > -1);
 };
 globals.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
-globals.left;
-globals.right;
-globals.up;
-globals.down;
 
 /**
  * Poly takes a list of argument pairs.
@@ -228,107 +224,107 @@ class Box {
 		this.bx += this.move.Right;
 		this.by += this.move.Up;
 		this.position.y = this.by + this.move.YSin * Math.sin(((new Date()).getTime() - globals.time) / 1200);
-		this.position.x = this.bx + this.move.XSin * Math.sin(((new Date()).getTime() - globals.time) / 1200);
+		this.position.x = this.bx + this.move.XSin * Math.sin(((new Date()).getTime() - globals.time) / 1200);	
 		if("NBASTR".split("").includes(this.type)) {
-			globals.left = (globals.playerCoords.x >= this.position.x + this.w + 10 && globals.playerCoords.x + globals.playerVelocity.x <= this.position.x + this.w + 15 && globals.playerCoords.y >= this.position.y - 12 && globals.playerCoords.y <= this.position.y + this.h + 12);
-			globals.right = (globals.playerCoords.x <= this.position.x - 10 && globals.playerCoords.x + globals.playerVelocity.x >= this.position.x - 15 && globals.playerCoords.y >= this.position.y - 12 && globals.playerCoords.y <= this.position.y + this.h + 12);
-			globals.up = (globals.playerCoords.y >= this.position.y + this.h + 10 && globals.playerCoords.y + globals.playerVelocity.y <= this.position.y + this.h + 15 && globals.playerCoords.x >= this.position.x - 12 && globals.playerCoords.x <= this.position.x + this.w + 12);
-			globals.down = (globals.playerCoords.y <= this.position.y - 10 && globals.playerCoords.y + globals.playerVelocity.y >= this.position.y - 15 && globals.playerCoords.x >= this.position.x - 12 && globals.playerCoords.x <= this.position.x + this.w + 12);
-		}
-		if(this.type === "R") {
-			if(globals.left) {
-				globals.playerCoords.x = this.position.x + this.w + 15;
-				globals.playerVelocity.x = 0;
+			let left = (globals.playerCoords.x >= this.position.x + this.w + 10 && globals.playerCoords.x + globals.playerVelocity.x <= this.position.x + this.w + 15 && globals.playerCoords.y >= this.position.y - 12 && globals.playerCoords.y <= this.position.y + this.h + 12);
+			let right = (globals.playerCoords.x <= this.position.x - 10 && globals.playerCoords.x + globals.playerVelocity.x >= this.position.x - 15 && globals.playerCoords.y >= this.position.y - 12 && globals.playerCoords.y <= this.position.y + this.h + 12);
+			let up = (globals.playerCoords.y >= this.position.y + this.h + 10 && globals.playerCoords.y + globals.playerVelocity.y <= this.position.y + this.h + 15 && globals.playerCoords.x >= this.position.x - 12 && globals.playerCoords.x <= this.position.x + this.w + 12);
+			let down = (globals.playerCoords.y <= this.position.y - 10 && globals.playerCoords.y + globals.playerVelocity.y >= this.position.y - 15 && globals.playerCoords.x >= this.position.x - 12 && globals.playerCoords.x <= this.position.x + this.w + 12);
+			if(this.type === "R") {
+				if(left) {
+					globals.playerCoords.x = this.position.x + this.w + 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(right) {
+					globals.playerCoords.x = this.position.x - 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(up) {
+					globals.playerCoords.y = this.position.y + this.h + 15;
+					globals.playerVelocity.y = 0;
+					globals.standing = true;
+				}
+				if(down) {
+					globals.playerCoords.y = this.position.y - 15;
+					globals.playerVelocity.y = 0;
+				}
 			}
-			if(globals.right) {
-				globals.playerCoords.x = this.position.x - 15;
-				globals.playerVelocity.x = 0;
+			if(this.type === "N") {
+				this.draw = false;
+				if(left) {
+					this.draw = true;
+					globals.playerCoords.x = this.position.x + this.w + 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(right) {
+					this.draw = true;
+					globals.playerCoords.x = this.position.x - 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(up) {
+					this.draw = true;
+					globals.playerCoords.y = this.position.y + this.h + 15;
+					globals.playerVelocity.y = 0;
+					globals.standing = true;
+				}
+				if(down) {
+					this.draw = true;
+					globals.playerCoords.y = this.position.y - 15;
+					globals.playerVelocity.y = 0;
+				}
 			}
-			if(globals.up) {
-				globals.playerCoords.y = this.position.y + this.h + 15;
-				globals.playerVelocity.y = 0;
-				globals.standing = true;
+			if(this.type === "B") {
+				if(left) {
+					globals.playerCoords.x = this.position.x + this.w + 15;
+					globals.playerVelocity.x = 30;
+				}
+				if(right) {
+					globals.playerCoords.x = this.position.x - 15;
+					globals.playerVelocity.x = -30;
+				}
+				if(up) {
+					globals.playerCoords.y = this.position.y + this.h + 15;
+					globals.playerVelocity.y = 20;
+				}
+				if(down) {
+					globals.playerCoords.y = this.position.y - 15;
+					globals.playerVelocity.y = -10;
+				}
 			}
-			if(globals.down) {
-				globals.playerCoords.y = this.position.y - 15;
-				globals.playerVelocity.y = 0;
+			if(this.type === "T") {
+				if(up) {
+					globals.playerCoords.y = this.position.y + this.h + 15;
+					globals.playerVelocity.y = 20;
+				}
 			}
-		}
-		if(this.type === "N") {
-			this.draw = false;
-			if(globals.left) {
-				this.draw = true;
-				globals.playerCoords.x = this.position.x + this.w + 15;
-				globals.playerVelocity.x = 0;
+			if(this.type === "S") {
+				if(left) {
+					globals.playerCoords.x = this.position.x + this.w + 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(right) {
+					globals.playerCoords.x = this.position.x - 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(down) {
+					globals.playerCoords.y = this.position.y - 15;
+					globals.playerVelocity.y = 0;
+				}
 			}
-			if(globals.right) {
-				this.draw = true;
-				globals.playerCoords.x = this.position.x - 15;
-				globals.playerVelocity.x = 0;
-			}
-			if(globals.up) {
-				this.draw = true;
-				globals.playerCoords.y = this.position.y + this.h + 15;
-				globals.playerVelocity.y = 0;
-				globals.standing = true;
-			}
-			if(globals.down) {
-				this.draw = true;
-				globals.playerCoords.y = this.position.y - 15;
-				globals.playerVelocity.y = 0;
-			}
-		}
-		if(this.type === "B") {
-			if(globals.left) {
-				globals.playerCoords.x = this.position.x + this.w + 15;
-				globals.playerVelocity.x = 30;
-			}
-			if(globals.right) {
-				globals.playerCoords.x = this.position.x - 15;
-				globals.playerVelocity.x = -30;
-			}
-			if(globals.up) {
-				globals.playerCoords.y = this.position.y + this.h + 15;
-				globals.playerVelocity.y = 20;
-			}
-			if(globals.down) {
-				globals.playerCoords.y = this.position.y - 15;
-				globals.playerVelocity.y = -10;
-			}
-		}
-		if(this.type === "T") {
-			if(globals.up) {
-				globals.playerCoords.y = this.position.y + this.h + 15;
-				globals.playerVelocity.y = 20;
-			}
-		}
-		if(this.type === "S") {
-			if(globals.left) {
-				globals.playerCoords.x = this.position.x + this.w + 15;
-				globals.playerVelocity.x = 0;
-			}
-			if(globals.right) {
-				globals.playerCoords.x = this.position.x - 15;
-				globals.playerVelocity.x = 0;
-			}
-			if(globals.down) {
-				globals.playerCoords.y = this.position.y - 15;
-				globals.playerVelocity.y = 0;
-			}
-		}
-		if(this.type === "A") {
-			if(globals.left) {
-				globals.playerCoords.x = this.position.x + this.w + 15;
-				globals.playerVelocity.x = 0;
-			}
-			if(globals.right) {
-				globals.playerCoords.x = this.position.x - 15;
-				globals.playerVelocity.x = 0;
-			}
-			if(globals.up) {
-				globals.playerCoords.y = this.position.y + this.h + 15;
-				globals.playerVelocity.y = 0;
-				globals.standing = true;
+			if(this.type === "A") {
+				if(left) {
+					globals.playerCoords.x = this.position.x + this.w + 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(right) {
+					globals.playerCoords.x = this.position.x - 15;
+					globals.playerVelocity.x = 0;
+				}
+				if(up) {
+					globals.playerCoords.y = this.position.y + this.h + 15;
+					globals.playerVelocity.y = 0;
+					globals.standing = true;
+				}
 			}
 		}
 		if(globals.playerCoords.y < this.position.y + this.h + 15 && globals.playerCoords.y >this.position.y - 15 && globals.playerCoords.x >this.position.x - 15 && globals.playerCoords.x < this.position.x + this.w + 15) {

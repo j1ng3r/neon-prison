@@ -4,7 +4,6 @@ import Vector from "./Vector.js";
 document.cookie = "_d_=0";
 let pau = 0,
 	rsr = 1,
-	inside,
 	player_costume = 0,
 	paused = 0;
 
