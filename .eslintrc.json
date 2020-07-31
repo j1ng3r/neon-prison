@@ -7,6 +7,6 @@
       "no-undef": "error",
       "no-import-assign": "off",
       "prefer-const": "off",
-      "one-var": ["warn", "never"],
+      "one-var": ["warn", "never"]
    }
 }

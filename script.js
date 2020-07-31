@@ -3,35 +3,35 @@ import globals from "./globals.js";
 import Player from "./Player.js";
 
 document.cookie = "_d_=0";
-let pau = 0,
-rsr = 1,
-player_costume = 0,
-paused = 0;
+let pau = 0;
+let rsr = 1;
+let player_costume = 0;
+let paused = 0;
 
 let canvas = new Canvas();
 canvas.camera.follow(Player);
 
 
 let levelText = [
-      "",
-      "Welcome to Neon Prison. You know the drill.\nHint: Red = Bad, Cyan = Win, valid keys are \"wasdr←↑→\"",
-      "Some blocks are fake.\nIf you can't seem to stand on it, it probably doesn't exist.",
-      "Also, others are invisible.\nBe prepared to be trolled.",
-      "You will learn to hate quicksand.\nIt's not directly harmful, but I added lava at the bottom.",
-      "If you liked quicksand, you'll be happy\nto know about the latest block type.... Slowstone!",
-      "Are walls around the exit too tall? Poor thing.\nBuy the bounce-pad today! (it's really just a block)",
-      "Fallblocks and jumpblocks. Nuff said.\nDeath comes on your hands only.",
-      "Mwahahahahahaha. I just wasted an entire line.\nOh no, I did it again! No more room to tell you about the new",
-      "Lucy in the sky with bounce-pads\nBy the Beetels. (bugs included)",
-      "Tick tock, I'm a clock\nFinally, some moving blocks!",
-      "You sneaky custard!\nI haven't gotten this far yet.",
-   ],
-   m = [];
+   "",
+   "Welcome to Neon Prison. You know the drill.\nHint: Red = Bad, Cyan = Win, valid keys are \"wasdr←↑→\"",
+   "Some blocks are fake.\nIf you can't seem to stand on it, it probably doesn't exist.",
+   "Also, others are invisible.\nBe prepared to be trolled.",
+   "You will learn to hate quicksand.\nIt's not directly harmful, but I added lava at the bottom.",
+   "If you liked quicksand, you'll be happy\nto know about the latest block type.... Slowstone!",
+   "Are walls around the exit too tall? Poor thing.\nBuy the bounce-pad today! (it's really just a block)",
+   "Fallblocks and jumpblocks. Nuff said.\nDeath comes on your hands only.",
+   "Mwahahahahahaha. I just wasted an entire line.\nOh no, I did it again! No more room to tell you about the new",
+   "Lucy in the sky with bounce-pads\nBy the Beetels. (bugs included)",
+   "Tick tock, I'm a clock\nFinally, some moving blocks!",
+   "You sneaky custard!\nI haven't gotten this far yet.",
+];
+let m = [];
 
 let
-   mouse = { x: 0, y: 0 },
-   clicked = false,
-   clickin = null;
+   mouse = { x: 0, y: 0 };
+let clicked = false;
+let clickin = null;
 
 
 function translatedPoly(...args) {

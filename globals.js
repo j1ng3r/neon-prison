@@ -51,9 +51,9 @@ globals.t;
 globals.alabastorBalkans = function alabastorBalkans() {
    globals.time = new Date().getTime();
    globals.b = [];
-   let c = globals.levelData[globals.lvl],
-      e = "",
-      f = { t: null, x: null, y: null, w: null, h: null };
+   let c = globals.levelData[globals.lvl];
+   let e = "";
+   let f = { t: null, x: null, y: null, w: null, h: null };
    for (let d in c) {
       globals.t = c[d].toString();
       if (/-|\d/.test(c[d])) {
