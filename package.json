@@ -1,10 +1,11 @@
 {
    "scripts": {
-      "start": "http-server"
+      "start": "http-server",
+      "fix": "eslint --fix ."
    },
-	"devDependencies": {
-		"@coalpha/eslint-config": "^1.0.3",
+   "devDependencies": {
+      "@coalpha/eslint-config": "^1.0.3",
       "eslint": "^7.5.0",
       "http-server": "latest"
-	}
+   }
 }

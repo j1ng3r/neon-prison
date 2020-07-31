@@ -14,7 +14,7 @@ canvas.camera.follow(Player);
 
 let levelText = [
       "",
-      "Welcome to Neon Prison. You know the drill.\nHint: Red = Bad, Cyan = Win, valid keys are \"wasdr\←\↑\→\"",
+      "Welcome to Neon Prison. You know the drill.\nHint: Red = Bad, Cyan = Win, valid keys are \"wasdr←↑→\"",
       "Some blocks are fake.\nIf you can't seem to stand on it, it probably doesn't exist.",
       "Also, others are invisible.\nBe prepared to be trolled.",
       "You will learn to hate quicksand.\nIt's not directly harmful, but I added lava at the bottom.",

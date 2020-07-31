@@ -6,6 +6,7 @@
    "rules": {
       "no-undef": "error",
       "no-import-assign": "off",
-      "prefer-const": "off"
+      "prefer-const": "off",
+      "one-var": ["warn", "never"],
    }
 }

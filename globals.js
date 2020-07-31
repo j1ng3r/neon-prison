@@ -18,12 +18,6 @@ globals.getUnlockedCostumes_as_ary = function getUnlockedCostumes_as_ary() {
    return parseInt(cookie.slice(4), 36).toString(2).split("").map((v, i) => +v ? i : -1).filter(i => i > -1);
 };
 
-/**
- * Poly takes a list of argument pairs.
- * [x, y, x, y] etc and draws a line from each point to the given coodinates.
- * It fills it at the end.
- * It doesn't change any ctx styles which
- */
 globals.keys = [];
 globals.sneaky = !1;
 globals.lvl = 1;
