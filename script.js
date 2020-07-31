@@ -153,16 +153,16 @@ function update() {
    canvas.font("15px Monospace");
    canvas.wrapText(globals.lvl === levelText.length - 1 && globals.deaths > 0 ? "You not-so-sneaky custard!\nI haven't gotten this far yet." : levelText[globals.lvl], [canvas.halfsize.x, canvas.size.y - 27], 18);
    canvas.fillStyle(paused ? "#fff" : "#000");
-   canvas.roundedRect([canvas.size.x - 95, canvas.halfsize.y - 45], [90, 90], 45);
+   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 45);
    canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-   canvas.roundedRect([canvas.size.x - 70, canvas.halfsize.y - 20], [40, 40], 20);
+   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 20);
 
    translatedPoly(28, 22, 35.5, 1, 0, 0, 11, 33, -11, 33, 0, 0, -28, 22, -35.5, 1, 0, 0, 11, -33, 28, -22, 0, 0, -11, -33, -28, -22, 0, 0);
    translatedPoly(10, 16, 28, 22, 35.5, 1, 19, -7, 28, -22, 11, -33, 0, -20, -11, -33, -28, -22, -19, -7, -35.5, 1, -28, 22, -10, 16, -11, 33, 11, 33);
    canvas.fillStyle(paused ? "#fff" : "#000");
-   canvas.roundedRect([canvas.size.x - 62, canvas.halfsize.y - 12], [24, 24], 12);
+   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 12);
    canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-   canvas.roundedRect([canvas.size.x - 55, canvas.halfsize.y - 5], [10, 10], 5);
+   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 5);
    if (paused) {
       if (globals.invert) { canvas.ctx.fillStyle = "rgba(255,255,255,0.25)" } else { canvas.ctx.fillStyle = "rgba(0,0,0,0.25)" }
       canvas.rect([100, 50], canvas.size.subtract([200, 100]));
@@ -178,8 +178,8 @@ function update() {
       canvas.ctx.textAlign = "center";
       canvas.text("Choose your character", [canvas.halfsize.x, canvas.size.y - 100]);
       canvas.fillStyle("#808080");
-      if (globals.invert) { canvas.roundedRect([153, 153], [10, 10], 5) }
-      if (globals.sneaky) { canvas.roundedRect([153, 203], [10, 10], 5) }
+      if (canvas.colorsInverted) { canvas.circle([158, 158], 5) }
+      if (globals.sneaky) { canvas.circle([158, 208], 5) }
       for (let i in Player.unlockedCostumes) {
          canvas.drawChar(Player.unlockedCostumes[i], [120 + i * 50, canvas.size.y - 70]);
       }
@@ -195,11 +195,11 @@ function update() {
             }
             // Allot a lot of lots to my parking lot.
             if (canvas.size.y - 55 > mouse.y && mouse.y > canvas.size.y - 85) {
-               for (var i in Player.unlockedCostumes) {
-                  if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
+					Player.unlockedCostumes.forEach((costume, i) => {
+						if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
                      clickin = i;
                   }
-               }
+					});
             }
          }
       } else {
@@ -212,12 +212,12 @@ function update() {
             clickin = null;
          }
          if (canvas.size.y - 55 > mouse.y && mouse.y > canvas.size.y - 85) {
-            for (var i in Player.unlockedCostumes) {
-               if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
-                  player_costume = Player.unlockedCostumes[i];
+				Player.unlockedCostumes.forEach((costume, i) => {
+					if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
+                  player_costume = costume;
                   clickin = null;
                }
-            }
+				});
          }
       }
    }
