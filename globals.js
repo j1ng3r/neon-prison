@@ -1,12 +1,12 @@
 import Vector from "./Vector.js";
 import Canvas from "./Canvas.js";
+import Box from "./Box.js";
 
 /** Global Variables :stevenson: */
 const globals = {};
 
 globals.canvas = new Canvas();
-globals.playerCoords = new Vector(0, 0);
-globals.playerVelocity = new Vector(0, 0);
+
 globals.time = 0;
 globals.invert = false;
 
@@ -21,7 +21,6 @@ globals.getUnlockedCostumes_as_ary = function getUnlockedCostumes_as_ary() {
 	}
 	return parseInt(cookie.slice(4), 36).toString(2).split("").map((v, i) => +v ? i : -1).filter(i => i > -1);
 };
-globals.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
 
 /**
  * Poly takes a list of argument pairs.
@@ -29,9 +28,6 @@ globals.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
  * It fills it at the end.
  * It doesn't change any ctx styles which
  */
-globals.standing = true;
-globals.gained = 0;
-globals.deaths = 0;
 globals.keys = [];
 globals.sneaky = !1;
 globals.lvl = 1;
@@ -59,7 +55,7 @@ globals.levelData = [
 globals.b;
 globals.t;
 
-globals.drawChar = function drawChar(sprite, position, eyePosition) {
+globals.canvas.drawChar = function drawChar(sprite, position, eyePosition) {
 	if(!eyePosition) { eyePosition = 0; }
 	position = new Vector(position);
 	let x = position.x, y = position.y;
@@ -113,9 +109,9 @@ globals.drawChar = function drawChar(sprite, position, eyePosition) {
 			globals.canvas.polygon([x + 13, y + 2], [x + 8, y + 10], [x + 8, y + 11], [x + 13, y + 3]);
 			return;
 		case 4:
-			globals.canvas.fillStyle("#fff");
+			globals.canvas.fillStyle("#0f0");
 			globals.canvas.rect([x - 15, y - 15], [30, 10]);
-			globals.canvas.fillStyle("#fff");
+			globals.canvas.fillStyle("#0f0");
 			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
 			globals.canvas.fillStyle("#000");
 			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
@@ -124,12 +120,12 @@ globals.drawChar = function drawChar(sprite, position, eyePosition) {
 			return;
 		case 5:
 			globals.canvas.fillStyle("#F00");
-			globals.canvas.rect([x - 15, y - 15], [30, 10]);
+			globals.canvas.rect([x - 15, y + 5], [30, 10]);
 			globals.canvas.fillStyle("#FF0");
 			globals.canvas.roundedRect([x - 15, y - 15], [30, 30], 9);
 			globals.canvas.fillStyle("#00F");
-			globals.canvas.circle([x - 6 + eyePosition, y - 3], 3);
-			globals.canvas.circle([x + 6 + eyePosition, y - 3], 3);
+			globals.canvas.circle([x - 6 - eyePosition, y + 3], 3);
+			globals.canvas.circle([x + 6 - eyePosition, y + 3], 3);
 			globals.canvas.fillStyle("#000");
 			globals.canvas.roundedRect([x - 7, y - 9], [14, 5], 2);
 			return;
@@ -186,210 +182,14 @@ globals.drawChar = function drawChar(sprite, position, eyePosition) {
 	}
 };
 
-/* A few comments
-   D=die
-   R=regular
-   N=invisible
-   F=fake
-   W=win
-   B=bounce
-   U=slowstone
-   V=quicksand
-   A=jumpblock
-   S=fallblock
-   E=fake death
-   T=bounce jumpblock
-   *=New character {x,y,size,number (0 is default)}
-*/
-class Box {
-	constructor(a) {
-		this.position = new Vector(a.x, a.y);
-		this.bx = a.x;
-		this.by = a.y;
-		this.w = a.w;
-		this.h = a.h;
-		this.size = new Vector(a.w, a.h);
-		this.type = a.t;
-		if(a.m) {
-			this.move = {Up:(a.m.u || 0), Right:(a.m.r || 0), YSin:(a.m.y || 0), XSin:(a.m.x || 0)};
-		}else{
-			this.move = {Up:0, Right:0, YSin:0, XSin:0};
-		}
-		this.col = Box.colors[a.t] || "#FFF";
-		this.bright = 255;
-		this.fake = false;
-		this.draw = a.t !== "N";
-	}
-	sense() {
-		this.bx += this.move.Right;
-		this.by += this.move.Up;
-		this.position.y = this.by + this.move.YSin * Math.sin(((new Date()).getTime() - globals.time) / 1200);
-		this.position.x = this.bx + this.move.XSin * Math.sin(((new Date()).getTime() - globals.time) / 1200);	
-		if("NBASTR".split("").includes(this.type)) {
-			let left = (globals.playerCoords.x >= this.position.x + this.w + 10 && globals.playerCoords.x + globals.playerVelocity.x <= this.position.x + this.w + 15 && globals.playerCoords.y >= this.position.y - 12 && globals.playerCoords.y <= this.position.y + this.h + 12);
-			let right = (globals.playerCoords.x <= this.position.x - 10 && globals.playerCoords.x + globals.playerVelocity.x >= this.position.x - 15 && globals.playerCoords.y >= this.position.y - 12 && globals.playerCoords.y <= this.position.y + this.h + 12);
-			let up = (globals.playerCoords.y >= this.position.y + this.h + 10 && globals.playerCoords.y + globals.playerVelocity.y <= this.position.y + this.h + 15 && globals.playerCoords.x >= this.position.x - 12 && globals.playerCoords.x <= this.position.x + this.w + 12);
-			let down = (globals.playerCoords.y <= this.position.y - 10 && globals.playerCoords.y + globals.playerVelocity.y >= this.position.y - 15 && globals.playerCoords.x >= this.position.x - 12 && globals.playerCoords.x <= this.position.x + this.w + 12);
-			if(this.type === "R") {
-				if(left) {
-					globals.playerCoords.x = this.position.x + this.w + 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(right) {
-					globals.playerCoords.x = this.position.x - 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(up) {
-					globals.playerCoords.y = this.position.y + this.h + 15;
-					globals.playerVelocity.y = 0;
-					globals.standing = true;
-				}
-				if(down) {
-					globals.playerCoords.y = this.position.y - 15;
-					globals.playerVelocity.y = 0;
-				}
-			}
-			if(this.type === "N") {
-				this.draw = false;
-				if(left) {
-					this.draw = true;
-					globals.playerCoords.x = this.position.x + this.w + 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(right) {
-					this.draw = true;
-					globals.playerCoords.x = this.position.x - 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(up) {
-					this.draw = true;
-					globals.playerCoords.y = this.position.y + this.h + 15;
-					globals.playerVelocity.y = 0;
-					globals.standing = true;
-				}
-				if(down) {
-					this.draw = true;
-					globals.playerCoords.y = this.position.y - 15;
-					globals.playerVelocity.y = 0;
-				}
-			}
-			if(this.type === "B") {
-				if(left) {
-					globals.playerCoords.x = this.position.x + this.w + 15;
-					globals.playerVelocity.x = 30;
-				}
-				if(right) {
-					globals.playerCoords.x = this.position.x - 15;
-					globals.playerVelocity.x = -30;
-				}
-				if(up) {
-					globals.playerCoords.y = this.position.y + this.h + 15;
-					globals.playerVelocity.y = 20;
-				}
-				if(down) {
-					globals.playerCoords.y = this.position.y - 15;
-					globals.playerVelocity.y = -10;
-				}
-			}
-			if(this.type === "T") {
-				if(up) {
-					globals.playerCoords.y = this.position.y + this.h + 15;
-					globals.playerVelocity.y = 20;
-				}
-			}
-			if(this.type === "S") {
-				if(left) {
-					globals.playerCoords.x = this.position.x + this.w + 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(right) {
-					globals.playerCoords.x = this.position.x - 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(down) {
-					globals.playerCoords.y = this.position.y - 15;
-					globals.playerVelocity.y = 0;
-				}
-			}
-			if(this.type === "A") {
-				if(left) {
-					globals.playerCoords.x = this.position.x + this.w + 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(right) {
-					globals.playerCoords.x = this.position.x - 15;
-					globals.playerVelocity.x = 0;
-				}
-				if(up) {
-					globals.playerCoords.y = this.position.y + this.h + 15;
-					globals.playerVelocity.y = 0;
-					globals.standing = true;
-				}
-			}
-		}
-		if(globals.playerCoords.y < this.position.y + this.h + 15 && globals.playerCoords.y >this.position.y - 15 && globals.playerCoords.x >this.position.x - 15 && globals.playerCoords.x < this.position.x + this.w + 15) {
-			if(this.type === "D") { globals.die(); }
-			if(this.type === "F" && !this.fake) { this.fake = true; }
-			if(this.type === "E" && !this.fake) { this.fake = true; }
-			if(this.type === "U") { globals.playerCoords.y += 2; globals.standing = true; }
-			if(this.type === "V") { globals.playerCoords.y -= 4; }
-			if(this.type === "W") {
-				return"levelup";
-			}
-		}
-		if(this.type === "*") {
-			if(globals.unlockedCostumes.includes(this.w) || globals.gained === this.w) {
-				this.draw = false;
-			}else{
-				this.draw = true;
-				if(globals.playerCoords.y < this.position.y + 30 && globals.playerCoords.y >this.position.y - 30 && globals.playerCoords.x >this.position.x - 30 && globals.playerCoords.x < this.position.x + 30) { globals.gained = this.w; }
-			}
-		}
-	}
-	img() {
-		if(this.type === "*") {
-			if(this.draw) {
-				globals.drawChar(this.w, this.position.subtract(globals.playerCoords.round()).invertY().add(globals.canvas.size.scale(0.5)));
-			}
-		} else {
-			if(this.fake) {
-				const hex = "0123456789abcdef";
-				this.bright -= (this.bright >= 100);
-				this.col = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
-				this.col = `#${this.col}${this.type == "F" ? (this.col + this.col) : "0000"}`;
-			}
-			globals.canvas.fillStyle(this.col);
-			if(this.draw) {
-				globals.canvas.rect(this.position.subtract(globals.playerCoords.round()).invertY()
-					.add(globals.canvas.size.scale(0.5)), this.size.invertY());
-			}
-		}
-	}
-}
-
-Box.colors = {
-	T:"#0BF",
-	D:"#F00",
-	E:"#F00",
-	W:"#0FF",
-	U:"#B90",
-	V:"#FB0",
-	B:"#00F",
-	S:"#F0F",
-	A:"#93E"
-};
-
 /**
  * This is some kind of level generation thing??
  */
-globals.alabastorBalkans = function alabastorBalkans(c, d, e, f) {
+globals.alabastorBalkans = function alabastorBalkans() {
 	globals.time = new Date().getTime();
-	globals.gained = 0;
-	globals.playerCoords = new Vector(0, 0);
-	globals.playerVelocity = new Vector(0, 0);
 	globals.b = [];
-	c = globals.levelData[globals.lvl], e = "", f = {t:null, x:null, y:null, w:null, h:null};
-	for(d in c) {
+	let c = globals.levelData[globals.lvl], e = "", f = {t:null, x:null, y:null, w:null, h:null};
+	for(let d in c) {
 		globals.t = c[d].toString();
 		if(/-|\d/.test(c[d])) {
 			e += globals.t;
@@ -415,16 +215,6 @@ globals.alabastorBalkans = function alabastorBalkans(c, d, e, f) {
 		globals.b.push(new Box({x:200, y:575, w:40, h:5, t:"T", m:{y:150}}));
 		globals.b.push(new Box({x:(-520), y:-1050, w:2000, h:1000, t:"D", m:{u:0.5}}));
 	}
-};
-
-globals.die = function die() {
-	globals.deaths++;
-	if(globals.sneaky || globals.keys[83]) {
-		globals.deaths = 0;
-		globals.lvl = 1;
-		globals.start = 0;
-	}
-	globals.alabastorBalkans();
 };
 
 export default globals;
