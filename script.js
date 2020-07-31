@@ -1,4 +1,4 @@
-import Canvas from "./Canvas.js";
+import { Canvas } from "./Canvas.js";
 import globals from "./globals.js";
 import Player from "./Player.js";
 
