@@ -27,8 +27,9 @@ export class Canvas {
          disable: () => this.camera.enabled = false,
          getPosition: () => this.camera.entity.position.round().invertY().subtract(this.halfsize),
          format(position) {
-            if (this.camera.enabled) {
-               return new Vector(position).subtract(this.camera.getPosition());
+				// This = camera, not canvas
+            if (this.enabled) {
+               return new Vector(position).subtract(this.getPosition());
             }
             return new Vector(position);
          },
