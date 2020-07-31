@@ -1,4 +1,12 @@
 import Vector from "./Vector.js";
+const defaultSprite = 0;
+const invertedColorSprite = 1;
+const demonSprite = 2;
+const zombieSprite = 3;
+const ghostSprite = 4;
+const upsideDownSprite = 5;
+const jailedSprite = 6;
+const mushroomSprite = 7;
 export default class Canvas {
    constructor() {
       this.colorsInverted = false;
@@ -12,7 +20,7 @@ export default class Canvas {
          disable: () => this.camera.enabled = false,
          getPosition: () => this.camera.entity.position.round().invertY().subtract(this.halfsize),
          format: position => this.camera.enabled ? new Vector(position).subtract(this.camera.getPosition()) : new Vector(position),
-      };
+		};
    }
    setElement(element) {
       this.element = element;
@@ -96,6 +104,7 @@ export default class Canvas {
 		let { x } = position,
 			{ y } = position;
 		switch (sprite) {
+			// Default
 			case 0:
 				this.fillStyle("#F00");
 				this.rect([x - 15, y - 15], [30, 10]);
@@ -107,6 +116,7 @@ export default class Canvas {
 				this.fillStyle("#000");
 				this.roundedRect([x - 7, y + 4], [14, 5], 2);
 				break;
+			// Inverted colors
 			case 1:
 				this.fillStyle("#0FF");
 				this.rect([x - 15, y - 15], [30, 10]);
@@ -118,6 +128,7 @@ export default class Canvas {
 				this.fillStyle("#FFF");
 				this.roundedRect([x - 7, y + 4], [14, 5], 2);
 				return;
+			// Demon colors
 			case 2:
 				this.fillStyle("#FFF");
 				this.rect([x - 15, y - 15], [30, 10]);
@@ -129,6 +140,7 @@ export default class Canvas {
 				this.fillStyle("#000");
 				this.roundedRect([x - 7, y + 4], [14, 5], 2);
 				return;
+			//Zombie colors
 			case 3:
 				this.fillStyle("#000");
 				this.rect([x - 15, y - 15], [30, 10]);
@@ -144,16 +156,18 @@ export default class Canvas {
 				this.roundedRect([x - 7, y + 4], [14, 5], 2);
 				this.polygon([x + 13, y + 2], [x + 8, y + 10], [x + 8, y + 11], [x + 13, y + 3]);
 				return;
+			// White, black eyes
 			case 4:
-				this.fillStyle("#0f0");
+				this.fillStyle("#fff");
 				this.rect([x - 15, y - 15], [30, 10]);
-				this.fillStyle("#0f0");
+				this.fillStyle("#fff");
 				this.roundedRect([x - 15, y - 15], [30, 30], 9);
 				this.fillStyle("#000");
 				this.circle([x - 6 + eyePosition, y - 3], 3);
 				this.circle([x + 6 + eyePosition, y - 3], 3);
 				this.roundedRect([x - 7, y + 4], [14, 5], 2);
 				return;
+			//Upside down
 			case 5:
 				this.fillStyle("#F00");
 				this.rect([x - 15, y + 5], [30, 10]);
@@ -165,6 +179,7 @@ export default class Canvas {
 				this.fillStyle("#000");
 				this.roundedRect([x - 7, y - 9], [14, 5], 2);
 				return;
+			// Jailed
 			case 6:
 				this.fillStyle("#000");
 				this.rect([x - 11, y - 11], [22, 22]);
@@ -180,6 +195,7 @@ export default class Canvas {
 				this.rect([x - 11, y - 7], [22, 4]);
 				this.rect([x - 11, y + 3], [22, 4]);
 				return;
+			// Mushroom
 			case 7:
 				this.fillStyle("#f00");
 				this.rect([x - 10, y - 14], [20, 30]);
