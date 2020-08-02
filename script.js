@@ -13,6 +13,18 @@ let mouse = Vector.zero();
 let clicked = false;
 let clickin = null;
 
+function setCostumes(ary_unlockedCostumes) {
+   const c = ary_unlockedCostumes.filter((v, i, m) => m.indexOf(v) === i).reduce((a, v) => a + 2 ** v, 0).toString(36);
+   document.cookie = `_d_=${c};`;
+};
+function getUnlockedCostumes_as_ary() {
+   let cookie = document.cookie.split(";").find(v => v.slice(0, 4) === "_d_=");
+   if (cookie === undefined) {
+      cookie = document.cookie = "_d_=1";
+   }
+   return parseInt(cookie.slice(4), 36).toString(2).split("").map((v, i) => +v ? i : -1).filter(i => i > -1);
+};
+
 let canvas = new Canvas();
 canvas.camera.follow(Player);
 canvas.setElement(document.getElementById("c"));
@@ -250,5 +262,6 @@ function animator() {
    requestAnimationFrame(animator);
 }
 
+Player.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
 globals.b = Levels.generate(globals.lvl);
 animator();

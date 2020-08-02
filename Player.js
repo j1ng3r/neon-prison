@@ -5,7 +5,7 @@ import Levels from "./Levels.js";
 const Player = {
    deaths: 0,
    eyePosition: 0,
-   unlockedCostumes: globals.getUnlockedCostumes_as_ary(),
+   unlockedCostumes: [],
    position: Vector.zero(),
    velocity: Vector.zero(),
    standing: true,
