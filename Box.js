@@ -35,10 +35,10 @@ export default class Box {
             sineVector: Vector.zero()
          };
       }
-      this.col = Box.colors[a.t] || "#FFF";
+      this.col = Box.colors[this.type] || "#FFF";
       this.bright = 255;
       this.fake = false;
-      this.draw = a.t !== "N";
+      this.draw = this.type !== "N";
    }
    checkLeft(Player) {
       return Player.position.x >= this.position.x + this.size.x + 10

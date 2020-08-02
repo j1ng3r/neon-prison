@@ -30,6 +30,4 @@ const Player = {
    },
 };
 
-Player.reset();
-
 export default Player;
