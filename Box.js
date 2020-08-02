@@ -17,17 +17,23 @@ import Vector from "./Vector.js";
 let BOUNCE = 1;
 export default class Box {
    constructor(a) {
-      this.type = a.t;
+      this.type = a.type;
       this.position = new Vector(a.position);
       this.basePosition = new Vector(a.position);
       this.size = new Vector(a.size);
       if(a.costume) {
-         this.costume = a.costume
+         this.costume = a.costume;
       }
-      if (a.m) {
-         this.move = { velocity: new Vector(a.m.velocity), sineVector: new Vector(a.m.sineVector)};
+      if (a.move) {
+         this.move = {
+            velocity: new Vector(a.move.velocity),
+            sineVector: new Vector(a.move.sineVector)
+         };
       } else {
-         this.move = { velocity: Vector.zero(), sineVector: Vector.zero()};
+         this.move = {
+            velocity: Vector.zero(),
+            sineVector: Vector.zero()
+         };
       }
       this.col = Box.colors[a.t] || "#FFF";
       this.bright = 255;
@@ -35,7 +41,10 @@ export default class Box {
       this.draw = a.t !== "N";
    }
    checkLeft(Player) {
-      return (Player.position.x >= this.position.x + this.size.x + 10 && Player.position.x + Player.velocity.x <= this.position.x + this.size.x + 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
+      return Player.position.x >= this.position.x + this.size.x + 10
+         && Player.position.x + Player.velocity.x <= this.position.x + this.size.x + 15
+         && Player.position.y >= this.position.y - 12
+         && Player.position.y <= this.position.y + this.size.y + 12;
    }
    senseLeft(Player, bounce = 0) {
       if (this.checkLeft(Player)) {
@@ -45,7 +54,10 @@ export default class Box {
       }
    }
    checkRight(Player) {
-      return (Player.position.x <= this.position.x - 10 && Player.position.x + Player.velocity.x >= this.position.x - 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
+      return Player.position.x <= this.position.x - 10
+         && Player.position.x + Player.velocity.x >= this.position.x - 15
+         && Player.position.y >= this.position.y - 12
+         && Player.position.y <= this.position.y + this.size.y + 12;
    }
    senseRight(Player, bounce = 0) {
       if (this.checkRight(Player)) {
@@ -55,7 +67,10 @@ export default class Box {
       }
    }
    checkUp(Player) {
-      return (Player.position.y >= this.position.y + this.size.y + 10 && Player.position.y + Player.velocity.y <= this.position.y + this.size.y + 15 && Player.position.x >= this.position.x - 12 && Player.position.x <= this.position.x + this.size.x + 12);
+      return Player.position.y >= this.position.y + this.size.y + 10
+      && Player.position.y + Player.velocity.y <= this.position.y + this.size.y + 15
+      && Player.position.x >= this.position.x - 12
+      && Player.position.x <= this.position.x + this.size.x + 12;
    }
    senseUp(Player, bounce = 0) {
       if (this.checkUp(Player)) {
@@ -66,7 +81,10 @@ export default class Box {
       }
    }
    checkDown(Player) {
-      return (Player.position.y <= this.position.y - 10 && Player.position.y + Player.velocity.y >= this.position.y - 15 && Player.position.x >= this.position.x - 12 && Player.position.x <= this.position.x + this.size.x + 12);
+      return Player.position.y <= this.position.y - 10
+         && Player.position.y + Player.velocity.y >= this.position.y - 15
+         && Player.position.x >= this.position.x - 12
+         && Player.position.x <= this.position.x + this.size.x + 12;
    }
    senseDown(Player, bounce = 0) {
       if (this.checkDown(Player)) {
@@ -76,7 +94,10 @@ export default class Box {
       }
    }
    checkInside(Player) {
-      return Player.position.y < this.position.y + this.size.y + 15 && Player.position.y > this.position.y - 15 && Player.position.x > this.position.x - 15 && Player.position.x < this.position.x + this.size.x + 15;
+      return Player.position.y < this.position.y + this.size.y + 15
+      && Player.position.y > this.position.y - 15
+      && Player.position.x > this.position.x - 15
+      && Player.position.x < this.position.x + this.size.x + 15;
    }
    /**
     * Calculates the interaction between this Box and a Player object, updating this Box's properties and the Player's properties accordingly
