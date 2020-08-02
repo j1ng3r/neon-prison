@@ -24,12 +24,12 @@ canvas.element.onkeydown = function (evt) {
 canvas.element.onkeyup = function (evt) {
    globals.keys[evt.keyCode || evt.which] = false;
 };
-function getMouse(evt){
-	mouse = new Vector(evt.clientX - canvas.element.getBoundingClientRect().left,
-		evt.clientY - canvas.element.getBoundingClientRect().top);
+function getMouse(evt) {
+   mouse = new Vector(evt.clientX - canvas.element.getBoundingClientRect().left,
+      evt.clientY - canvas.element.getBoundingClientRect().top);
 }
 canvas.element.addEventListener("mousedown", evt => {
-	getMouse(evt);
+   getMouse(evt);
    clicked = 1;
    canvas.element.focus();
 }, false);
@@ -64,11 +64,11 @@ function update() {
       if (Player.standing) {
          Player.velocity.y = 0;
          if (globals.keys[38] || globals.keys[87]) {
-				Player.velocity.y = 13;
-				if (!globals.start) {
-					globals.start = Date.now()
-				}
-			}
+            Player.velocity.y = 13;
+            if (!globals.start) {
+               globals.start = Date.now();
+            }
+         }
       } else {
          Player.velocity.y -= 0.3;
       }
@@ -102,8 +102,8 @@ function update() {
          }
       }
       Player.eyePosition *= 0.9;
-		Player.velocity = Player.velocity.scaleXY(0.8, 0.95);
-		Player.position = Player.position.add(Player.velocity);
+      Player.velocity = Player.velocity.scaleXY(0.8, 0.95);
+      Player.position = Player.position.add(Player.velocity);
       pau = globals.start ? Math.floor((Date.now() - globals.start) / 100) / 10 : 0;
    }
    canvas.fillStyle("#000");
@@ -132,15 +132,15 @@ function update() {
    canvas.text("Deaths:", [50, canvas.halfsize.y + 5]);
    canvas.text(Player.deaths, [50, canvas.halfsize.y + 35]);
    canvas.text("Time:", [50, canvas.halfsize.y + 95]);
-	canvas.text(pau, [50, canvas.halfsize.y + 115]);
-	
-	canvas.font("15px Monospace");
-	let subtext = Levels[globals.lvl].subtext;
-	if(Levels[globals.lvl].sneaky && globals.deaths === 0) {
-		subtext = "You sneaky custard!\nI haven't gotten this far yet."
-	}
-	canvas.wrapText(subtext, [canvas.halfsize.x, canvas.size.y - 27], 18);
-   
+   canvas.text(pau, [50, canvas.halfsize.y + 115]);
+
+   canvas.font("15px Monospace");
+   let { subtext } = Levels[globals.lvl];
+   if (Levels[globals.lvl].sneaky && globals.deaths === 0) {
+      subtext = "You sneaky custard!\nI haven't gotten this far yet.";
+   }
+   canvas.wrapText(subtext, [canvas.halfsize.x, canvas.size.y - 27], 18);
+
    canvas.fillStyle(paused ? "#fff" : "#000");
    canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 45);
    canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
@@ -184,11 +184,11 @@ function update() {
             }
             // Allot a lot of lots to my parking lot.
             if (canvas.size.y - 55 > mouse.y && mouse.y > canvas.size.y - 85) {
-					Player.unlockedCostumes.forEach((costume, i) => {
-						if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
+               Player.unlockedCostumes.forEach((costume, i) => {
+                  if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
                      clickin = i;
                   }
-					});
+               });
             }
          }
       } else {
@@ -201,12 +201,12 @@ function update() {
             clickin = null;
          }
          if (canvas.size.y - 55 > mouse.y && mouse.y > canvas.size.y - 85) {
-				Player.unlockedCostumes.forEach((costume, i) => {
-					if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
+            Player.unlockedCostumes.forEach((costume, i) => {
+               if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
                   player_costume = costume;
                   clickin = null;
                }
-				});
+            });
          }
       }
    }

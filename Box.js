@@ -18,15 +18,15 @@ export default class Box {
    constructor(a) {
       this.position = new Vector(a.position);
       this.basePosition = new Vector(a.position);
-      if(a.costume) {
+      if (a.costume) {
          this.costume = a.costume;
       }
       this.size = new Vector(a.size);
       this.type = a.t;
       if (a.m) {
-         this.move = { velocity: new Vector(a.m.velocity), sineVector: new Vector(a.m.sineVector)};
+         this.move = { velocity: new Vector(a.m.velocity), sineVector: new Vector(a.m.sineVector) };
       } else {
-         this.move = { velocity: Vector.zero(), sineVector: Vector.zero()};
+         this.move = { velocity: Vector.zero(), sineVector: Vector.zero() };
       }
       this.col = Box.colors[a.t] || "#FFF";
       this.bright = 255;
@@ -34,7 +34,8 @@ export default class Box {
       this.draw = a.t !== "N";
    }
    /**
-    * Calculates the interaction between this Box and a Player object, updating this Box's properties and the Player's properties accordingly
+    * Calculates the interaction between this Box and a Player object,
+    * updating this Box's properties and the Player's properties accordingly
     * @param {Player} Player The Player object interacting with the box
     * @param {integer} time The time, in milliseconds, since the start of the level.
     */
