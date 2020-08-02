@@ -1,6 +1,8 @@
+import Levels from "./Levels.js";
 import { Canvas } from "./Canvas.js";
 import globals from "./globals.js";
 import Player from "./Player.js";
+import Vector from "./Vector.js";
 
 document.cookie = "_d_=0";
 let pau = 0;
@@ -14,16 +16,16 @@ canvas.camera.follow(Player);
 
 let levelText = [
    "",
-   "Welcome to Neon Prison. You know the drill.\nHint: Red = Bad, Cyan = Win, valid keys are \"wasdr←↑→\"",
-   "Some blocks are fake.\nIf you can't seem to stand on it, it probably doesn't exist.",
-   "Also, others are invisible.\nBe prepared to be trolled.",
-   "You will learn to hate quicksand.\nIt's not directly harmful, but I added lava at the bottom.",
-   "If you liked quicksand, you'll be happy\nto know about the latest block type.... Slowstone!",
-   "Are walls around the exit too tall? Poor thing.\nBuy the bounce-pad today! (it's really just a block)",
+   
+   ,
+   ,
+   ,
+   ,
+   ,
    "Fallblocks and jumpblocks. Nuff said.\nDeath comes on your hands only.",
-   "Mwahahahahahaha. I just wasted an entire line.\nOh no, I did it again! No more room to tell you about the new",
-   "Lucy in the sky with bounce-pads\nBy the Beetels. (bugs included)",
-   "Tick tock, I'm a clock\nFinally, some moving blocks!",
+   ,
+   ,
+   ,
    "You sneaky custard!\nI haven't gotten this far yet.",
 ];
 let m = [];
@@ -53,20 +55,17 @@ canvas.element.onkeydown = function (evt) {
 canvas.element.onkeyup = function (evt) {
    globals.keys[evt.keyCode || evt.which] = false;
 };
+function getMouse(evt){
+	mouse = new Vector(evt.clientX - canvas.element.getBoundingClientRect().left,
+		evt.clientY - canvas.element.getBoundingClientRect().top);
+}
 canvas.element.addEventListener("mousedown", evt => {
-   mouse = {
-      x: evt.clientX - canvas.element.getBoundingClientRect().left,
-      y: evt.clientY - canvas.element.getBoundingClientRect().top,
-   };
+	getMouse(evt);
    clicked = 1;
    canvas.element.focus();
-   evt.preventDefault();
 }, false);
 canvas.element.addEventListener("mouseup", evt => {
-   mouse = {
-      x: evt.clientX - canvas.element.getBoundingClientRect().left,
-      y: evt.clientY - canvas.element.getBoundingClientRect().top,
-   };
+   getMouse(evt);
    clicked = 0;
 }, false);
 if (!Player.unlockedCostumes.length) {
@@ -84,7 +83,12 @@ function update() {
       if (globals.keys[39] || globals.keys[68]) { Player.velocity.x += 1; Player.eyePosition += 0.5; if (!globals.start) { globals.start = Date.now() } }
       if (Player.standing) {
          Player.velocity.y = 0;
-         if (globals.keys[38] || globals.keys[87]) { Player.velocity.y = 13; if (!globals.start) { globals.start = Date.now() } }
+         if (globals.keys[38] || globals.keys[87]) {
+				Player.velocity.y = 13;
+				if (!globals.start) {
+					globals.start = Date.now()
+				}
+			}
       } else {
          Player.velocity.y -= 0.3;
       }
@@ -117,10 +121,8 @@ function update() {
          }
       }
       Player.eyePosition *= 0.9;
-      Player.velocity.y *= 0.95;
-      Player.velocity.x *= 0.8;
-      Player.position.x += Player.velocity.x;
-      Player.position.y += Player.velocity.y;
+		Player.velocity = Player.velocity.scaleXY(0.8, 0.95);
+		Player.position = Player.position.add(Player.velocity);
       pau = globals.start ? Math.floor((Date.now() - globals.start) / 100) / 10 : 0;
    }
    canvas.fillStyle("#000");
@@ -149,9 +151,15 @@ function update() {
    canvas.text("Deaths:", [50, canvas.halfsize.y + 5]);
    canvas.text(Player.deaths, [50, canvas.halfsize.y + 35]);
    canvas.text("Time:", [50, canvas.halfsize.y + 95]);
-   canvas.text(pau, [50, canvas.halfsize.y + 115]);
-   canvas.font("15px Monospace");
-   canvas.wrapText(globals.lvl === levelText.length - 1 && globals.deaths > 0 ? "You not-so-sneaky custard!\nI haven't gotten this far yet." : levelText[globals.lvl], [canvas.halfsize.x, canvas.size.y - 27], 18);
+	canvas.text(pau, [50, canvas.halfsize.y + 115]);
+	
+	canvas.font("15px Monospace");
+	let subtext = Levels[globals.lvl].subtext;
+	if(Levels[globals.lvl].sneaky && globals.deaths === 0) {
+		subtext = "You sneaky custard!\nI haven't gotten this far yet."
+	}
+	canvas.wrapText(subtext, [canvas.halfsize.x, canvas.size.y - 27], 18);
+   
    canvas.fillStyle(paused ? "#fff" : "#000");
    canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 45);
    canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
