@@ -14,15 +14,16 @@ import Vector from "./Vector.js";
    T=bounce jumpblock
    *=New character {x,y,size,number (0 is default)}
 */
+let BOUNCE = 1;
 export default class Box {
    constructor(a) {
+      this.type = a.t;
       this.position = new Vector(a.position);
       this.basePosition = new Vector(a.position);
-      if(a.costume) {
-         this.costume = a.costume;
-      }
       this.size = new Vector(a.size);
-      this.type = a.t;
+      if(a.costume) {
+         this.costume = a.costume
+      }
       if (a.m) {
          this.move = { velocity: new Vector(a.m.velocity), sineVector: new Vector(a.m.sineVector)};
       } else {
@@ -33,6 +34,50 @@ export default class Box {
       this.fake = false;
       this.draw = a.t !== "N";
    }
+   checkLeft(Player) {
+      return (Player.position.x >= this.position.x + this.size.x + 10 && Player.position.x + Player.velocity.x <= this.position.x + this.size.x + 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
+   }
+   senseLeft(Player, bounce = 0) {
+      if (this.checkLeft(Player)) {
+         Player.position.x = this.position.x + this.size.x + 15;
+         Player.velocity.x = 30 * bounce;
+         return true;
+      }
+   }
+   checkRight(Player) {
+      return (Player.position.x <= this.position.x - 10 && Player.position.x + Player.velocity.x >= this.position.x - 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
+   }
+   senseRight(Player, bounce = 0) {
+      if (this.checkRight(Player)) {
+         Player.position.x = this.position.x - 15;
+         Player.velocity.x = -30 * bounce;
+         return true;
+      }
+   }
+   checkUp(Player) {
+      return (Player.position.y >= this.position.y + this.size.y + 10 && Player.position.y + Player.velocity.y <= this.position.y + this.size.y + 15 && Player.position.x >= this.position.x - 12 && Player.position.x <= this.position.x + this.size.x + 12);
+   }
+   senseUp(Player, bounce = 0) {
+      if (this.checkUp(Player)) {
+         Player.position.y = this.position.y + this.size.y + 15;
+         Player.velocity.y = 20 * bounce;
+         Player.standing = bounce === 0;
+         return true;
+      }
+   }
+   checkDown(Player) {
+      return (Player.position.y <= this.position.y - 10 && Player.position.y + Player.velocity.y >= this.position.y - 15 && Player.position.x >= this.position.x - 12 && Player.position.x <= this.position.x + this.size.x + 12);
+   }
+   senseDown(Player, bounce = 0) {
+      if (this.checkDown(Player)) {
+         Player.position.y = this.position.y - 15;
+         Player.velocity.y = -10 * bounce;
+         return true;
+      }
+   }
+   checkInside(Player) {
+      return Player.position.y < this.position.y + this.size.y + 15 && Player.position.y > this.position.y - 15 && Player.position.x > this.position.x - 15 && Player.position.x < this.position.x + this.size.x + 15;
+   }
    /**
     * Calculates the interaction between this Box and a Player object, updating this Box's properties and the Player's properties accordingly
     * @param {Player} Player The Player object interacting with the box
@@ -41,124 +86,65 @@ export default class Box {
    sense(Player, time) {
       this.basePosition = this.basePosition.add(this.move.velocity);
       this.position = this.basePosition.add(this.move.sineVector.scale(Math.sin(time / 1200)));
-      if ("NBASTR".split("").includes(this.type)) {
-         let left = (Player.position.x >= this.position.x + this.size.x + 10 && Player.position.x + Player.velocity.x <= this.position.x + this.size.x + 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
-         let right = (Player.position.x <= this.position.x - 10 && Player.position.x + Player.velocity.x >= this.position.x - 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
-         let up = (Player.position.y >= this.position.y + this.size.y + 10 && Player.position.y + Player.velocity.y <= this.position.y + this.size.y + 15 && Player.position.x >= this.position.x - 12 && Player.position.x <= this.position.x + this.size.x + 12);
-         let down = (Player.position.y <= this.position.y - 10 && Player.position.y + Player.velocity.y >= this.position.y - 15 && Player.position.x >= this.position.x - 12 && Player.position.x <= this.position.x + this.size.x + 12);
-         if (this.type === "R") {
-            if (left) {
-               Player.position.x = this.position.x + this.size.x + 15;
-               Player.velocity.x = 0;
-            }
-            if (right) {
-               Player.position.x = this.position.x - 15;
-               Player.velocity.x = 0;
-            }
-            if (up) {
-               Player.position.y = this.position.y + this.size.y + 15;
-               Player.velocity.y = 0;
-               Player.standing = true;
-            }
-            if (down) {
-               Player.position.y = this.position.y - 15;
-               Player.velocity.y = 0;
-            }
-         }
-         if (this.type === "N") {
-            this.draw = false;
-            if (left) {
-               this.draw = true;
-               Player.position.x = this.position.x + this.size.x + 15;
-               Player.velocity.x = 0;
-            }
-            if (right) {
-               this.draw = true;
-               Player.position.x = this.position.x - 15;
-               Player.velocity.x = 0;
-            }
-            if (up) {
-               this.draw = true;
-               Player.position.y = this.position.y + this.size.y + 15;
-               Player.velocity.y = 0;
-               Player.standing = true;
-            }
-            if (down) {
-               this.draw = true;
-               Player.position.y = this.position.y - 15;
-               Player.velocity.y = 0;
-            }
-         }
-         if (this.type === "B") {
-            if (left) {
-               Player.position.x = this.position.x + this.size.x + 15;
-               Player.velocity.x = 30;
-            }
-            if (right) {
-               Player.position.x = this.position.x - 15;
-               Player.velocity.x = -30;
-            }
-            if (up) {
-               Player.position.y = this.position.y + this.size.y + 15;
-               Player.velocity.y = 20;
-            }
-            if (down) {
-               Player.position.y = this.position.y - 15;
-               Player.velocity.y = -10;
-            }
-         }
-         if (this.type === "T") {
-            if (up) {
-               Player.position.y = this.position.y + this.size.y + 15;
-               Player.velocity.y = 20;
-            }
-         }
-         if (this.type === "S") {
-            if (left) {
-               Player.position.x = this.position.x + this.size.x + 15;
-               Player.velocity.x = 0;
-            }
-            if (right) {
-               Player.position.x = this.position.x - 15;
-               Player.velocity.x = 0;
-            }
-            if (down) {
-               Player.position.y = this.position.y - 15;
-               Player.velocity.y = 0;
-            }
-         }
-         if (this.type === "A") {
-            if (left) {
-               Player.position.x = this.position.x + this.size.x + 15;
-               Player.velocity.x = 0;
-            }
-            if (right) {
-               Player.position.x = this.position.x - 15;
-               Player.velocity.x = 0;
-            }
-            if (up) {
-               Player.position.y = this.position.y + this.size.y + 15;
-               Player.velocity.y = 0;
-               Player.standing = true;
-            }
-         }
+      if (this.type === "R") {
+         this.senseLeft(Player);
+         this.senseUp(Player);
+         this.senseRight(Player);
+         this.senseDown(Player);
       }
-      if (Player.position.y < this.position.y + this.size.y + 15 && Player.position.y > this.position.y - 15 && Player.position.x > this.position.x - 15 && Player.position.x < this.position.x + this.size.x + 15) {
-         if (this.type === "D") { Player.die() }
-         if (this.type === "F" && !this.fake) { this.fake = true }
-         if (this.type === "E" && !this.fake) { this.fake = true }
-         if (this.type === "U") { Player.position.y += 2; Player.standing = true }
-         if (this.type === "V") { Player.position.y -= 4 }
-         if (this.type === "W") {
-            return "levelup";
+      if (this.type === "N") {
+         this.draw = this.senseLeft(Player)
+                  || this.senseUp(Player)
+                  || this.senseRight(Player)
+                  || this.senseDown(Player);
+      }
+      if (this.type === "B") {
+         this.senseLeft(Player, BOUNCE);
+         this.senseUp(Player, BOUNCE);
+         this.senseRight(Player, BOUNCE);
+         this.senseDown(Player, BOUNCE);
+      }
+      if (this.type === "T") {
+         this.senseUp(Player, BOUNCE);
+      }
+      if (this.type === "S") {
+         this.senseLeft(Player);
+         this.senseRight(Player);
+         this.senseDown(Player);
+      }
+      if (this.type === "A") {
+         this.senseLeft(Player);
+         this.senseRight(Player);
+         this.senseUp(Player);
+      }
+      if (this.type === "D" && this.checkInside(Player)) {
+         Player.die();
+      }
+      if (this.type === "F" && this.checkInside(Player)) {
+         this.fake = true;
+      }
+      if (this.type === "E" && this.checkInside(Player)) {
+         this.fake = true;
+      }
+      if (this.type === "U" && this.checkInside(Player)) {
+         if(this.checkInside(Player)) {
+            Player.velocity.y += 2;
+            Player.standing = true;
          }
+         
+      }
+      if (this.type === "V" && this.checkInside(Player)) {
+         // Player.velocity.y -= 0.5;
+         Player.position.y -= 4;
+      }
+      if (this.type === "W" && this.checkInside(Player)) {
+            return "levelup";
       }
       if (this.type === "*") {
-         if (Player.unlockedCostumes.includes(this.costume) || Player.gained === this.costume) {
-            this.draw = false;
-         } else {
+         this.draw = false;
+         if (!Player.unlockedCostumes.includes(this.costume) && Player.gained === 0) {
             this.draw = true;
-            if (Player.position.y < this.position.y + 30 && Player.position.y > this.position.y - 30 && Player.position.x > this.position.x - 30 && Player.position.x < this.position.x + 30) {
+            if (this.checkInside(Player)) {
                Player.gained = this.costume;
             }
          }
@@ -167,14 +153,18 @@ export default class Box {
    img(canvas) {
       if (this.type === "*") {
          if (this.draw) {
-            canvas.drawChar(this.costume, this.position.invertY(), 0);
+            canvas.drawChar(this.costume, this.position.add([15, 15]).invertY(), 0);
          }
       } else {
          if (this.fake) {
             const hex = "0123456789abcdef";
             this.bright -= (this.bright >= 100);
             let brightness = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
-            this.col = `#${brightness}${this.type === "F" ? (brightness + brightness) : "0000"}`;
+            if(this.type === "F") {
+               this.col = `#${brightness}${brightness}${brightness}`
+            } else {
+               this.col = `#${brightness}0000`;
+            }
          }
          canvas.fillStyle(this.col);
          if (this.draw) {

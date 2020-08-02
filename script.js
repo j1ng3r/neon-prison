@@ -53,14 +53,34 @@ function translatedPoly(...args) {
 
 function update() {
    if (!paused) {
+      if(globals.keys[84]) {
+         globals.lvl = +prompt("Which level?") || globals.lvl;
+         Player.reset();
+         globals.time = Date.now();
+         globals.b = Levels.generate(globals.lvl);
+         globals.keys[84] = false;
+         return;
+      }
       if (globals.keys[83]) { Player.die() }
       if (globals.keys[82] && rsr) {
          Player.die();
          rsr = 0;
       }
       if (!rsr && !globals.keys[82]) { rsr = 1 }
-      if (globals.keys[37] || globals.keys[65]) { Player.velocity.x -= 1; Player.eyePosition -= 0.5; if (!globals.start) { globals.start = Date.now() } }
-      if (globals.keys[39] || globals.keys[68]) { Player.velocity.x += 1; Player.eyePosition += 0.5; if (!globals.start) { globals.start = Date.now() } }
+      if (globals.keys[37] || globals.keys[65]) {
+         Player.velocity.x -= 1;
+         Player.eyePosition -= 0.5;
+         if (!globals.start) {
+            globals.start = Date.now();
+         }
+      }
+      if (globals.keys[39] || globals.keys[68]) {
+         Player.velocity.x += 1;
+         Player.eyePosition += 0.5;
+         if (!globals.start) {
+            globals.start = Date.now();
+         }
+      }
       if (Player.standing) {
          Player.velocity.y = 0;
          if (globals.keys[38] || globals.keys[87]) {
@@ -72,12 +92,11 @@ function update() {
       } else {
          Player.velocity.y -= 0.3;
       }
+      Player.standing = false;
       if (Player.position.y + Player.velocity.y <= 0) {
          Player.standing = true;
          Player.position.y = 0;
          Player.velocity.y = 0;
-      } else {
-         Player.standing = false;
       }
       if (Player.position.x + Player.velocity.x <= -500) {
          Player.velocity.x = 0;
