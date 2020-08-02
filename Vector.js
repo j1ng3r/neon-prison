@@ -19,6 +19,9 @@ export default class Vector {
    static isVector(v) {
       return v instanceof Vector;
    }
+   static zero() {
+      return new Vector(0, 0);
+   }
    round() {
       return new Vector(Math.round(this.x), Math.round(this.y));
    }

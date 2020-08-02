@@ -9,43 +9,12 @@ let pau = 0;
 let rsr = 1;
 let player_costume = 0;
 let paused = 0;
-
-let canvas = new Canvas();
-canvas.camera.follow(Player);
-
-
-let levelText = [
-   "",
-   
-   ,
-   ,
-   ,
-   ,
-   ,
-   "Fallblocks and jumpblocks. Nuff said.\nDeath comes on your hands only.",
-   ,
-   ,
-   ,
-   "You sneaky custard!\nI haven't gotten this far yet.",
-];
-let m = [];
-
-let
-   mouse = { x: 0, y: 0 };
+let mouse = Vector.zero();
 let clicked = false;
 let clickin = null;
 
-
-function translatedPoly(...args) {
-   canvas.ctx.beginPath();
-   canvas.ctx.moveTo(args[0] + canvas.size.x - 50, args[1] + canvas.halfsize.y);
-   for (let i = 2; i < Math.floor(args.length / 2) * 2; i += 2) {
-      canvas.ctx.lineTo(args[i] + canvas.size.x - 50, args[i + 1] + canvas.halfsize.y);
-   }
-   canvas.ctx.closePath();
-   canvas.ctx.fill();
-}
-
+let canvas = new Canvas();
+canvas.camera.follow(Player);
 canvas.setElement(document.getElementById("c"));
 
 canvas.element.onkeydown = function (evt) {
@@ -71,6 +40,17 @@ canvas.element.addEventListener("mouseup", evt => {
 if (!Player.unlockedCostumes.length) {
    globals.setCostumes(Player.unlockedCostumes = [0]);
 }
+
+function translatedPoly(...args) {
+   canvas.ctx.beginPath();
+   canvas.ctx.moveTo(args[0] + canvas.size.x - 50, args[1] + canvas.halfsize.y);
+   for (let i = 2; i < Math.floor(args.length / 2) * 2; i += 2) {
+      canvas.ctx.lineTo(args[i] + canvas.size.x - 50, args[i + 1] + canvas.halfsize.y);
+   }
+   canvas.ctx.closePath();
+   canvas.ctx.fill();
+}
+
 function update() {
    if (!paused) {
       if (globals.keys[83]) { Player.die() }
@@ -108,7 +88,7 @@ function update() {
          Player.position.x = 500;
       }
       for (let i in globals.b) {
-         if (globals.b[i].sense(Player, globals.time) === "levelup") {
+         if (globals.b[i].sense(Player, Date.now() - globals.time) === "levelup") {
             globals.lvl++;
             if (Player.gained) {
                Player.unlockedCostumes.push(Player.gained);
@@ -116,7 +96,8 @@ function update() {
                Player.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
             }
             Player.reset();
-            globals.alabastorBalkans();
+            globals.time = Date.now();
+            globals.b = Levels.generate(globals.lvl);
             return;
          }
       }
@@ -250,6 +231,5 @@ function animator() {
    requestAnimationFrame(animator);
 }
 
-
-globals.alabastorBalkans();
+globals.b = Levels.generate(globals.lvl);
 animator();

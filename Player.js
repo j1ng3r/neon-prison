@@ -1,17 +1,18 @@
 import Vector from "./Vector.js";
 import globals from "./globals.js";
+import Levels from "./Levels.js";
 
 const Player = {
    deaths: 0,
    eyePosition: 0,
    unlockedCostumes: globals.getUnlockedCostumes_as_ary(),
-   position: new Vector(0, 0),
-   velocity: new Vector(0, 0),
+   position: Vector.zero(),
+   velocity: Vector.zero(),
    standing: true,
    gained: 0,
    reset() {
-      Player.position = new Vector(0, 0);
-      Player.velocity = new Vector(0, 0);
+      Player.position = Vector.zero();
+      Player.velocity = Vector.zero();
       Player.standing = true;
       Player.gained = 0;
    },
@@ -24,7 +25,8 @@ const Player = {
          Player.deaths++;
       }
       Player.reset();
-      globals.alabastorBalkans();
+      globals.time = Date.now();
+      globals.b = Levels.generate(globals.lvl);
    },
 };
 
