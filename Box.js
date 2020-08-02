@@ -24,7 +24,7 @@ export default class Box {
       this.size = new Vector(a.size);
       this.type = a.t;
       if (a.m) {
-         this.move = { velocity: new Vector(a.velocity), sineVector: new Vector(a.sineVector)};
+         this.move = { velocity: new Vector(a.m.velocity), sineVector: new Vector(a.m.sineVector)};
       } else {
          this.move = { velocity: Vector.zero(), sineVector: Vector.zero()};
       }
@@ -40,7 +40,7 @@ export default class Box {
     */
    sense(Player, time) {
       this.basePosition = this.basePosition.add(this.move.velocity);
-      this.position = this.basePosition.add(this.move.sineVector.scale(Math.sin((time / 1200)));
+      this.position = this.basePosition.add(this.move.sineVector.scale(Math.sin(time / 1200)));
       if ("NBASTR".split("").includes(this.type)) {
          let left = (Player.position.x >= this.position.x + this.size.x + 10 && Player.position.x + Player.velocity.x <= this.position.x + this.size.x + 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);
          let right = (Player.position.x <= this.position.x - 10 && Player.position.x + Player.velocity.x >= this.position.x - 15 && Player.position.y >= this.position.y - 12 && Player.position.y <= this.position.y + this.size.y + 12);

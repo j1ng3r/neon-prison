@@ -1,3 +1,4 @@
+import Vector from "./Vector.js";
 import Box from "./Box.js";
 
 let Levels = [
