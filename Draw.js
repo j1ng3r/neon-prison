@@ -1,7 +1,6 @@
 import Vector from "./Vector.js";
 import Levels from "./Levels.js";
 
-
 export default class Draw {
 	/**
 	 * 
@@ -99,7 +98,7 @@ export default class Draw {
       this.canvas.fillStyle("#fff");
       this.canvas.ctx.textAlign = "center";
       this.canvas.text("Choose your character", [this.canvas.halfsize.x, this.canvas.size.y - 100]);
-      unlockedCostumes.forEach((costume, i) => draw.character(costume, [120 + i * 50, this.canvas.size.y - 70]));
+      unlockedCostumes.forEach((costume, i) => this.character(costume, [120 + i * 50, this.canvas.size.y - 70]));
    }
 	character(sprite, position, eyePosition) {
       if (!eyePosition) { eyePosition = 0 }
