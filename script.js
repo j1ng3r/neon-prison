@@ -166,10 +166,4 @@ function update() {
 Player.unlockedCostumes = getUnlockedCostumes_as_ary();
 globals.b = Levels.generate(globals.lvl);
 
-setInterval(() => {
-   try {
-      update();
-   } catch (e) {
-      console.error(e);
-   }
-}, 16);
+setInterval(update, 17);
