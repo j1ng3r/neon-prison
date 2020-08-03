@@ -165,15 +165,14 @@ function update() {
       clickin = null;
    }
 }
-function animator() {
+
+Player.unlockedCostumes = getUnlockedCostumes_as_ary();
+globals.b = Levels.generate(globals.lvl);
+
+setInterval(() => {
    try {
       update();
    } catch (e) {
       console.error(e);
    }
-   requestAnimationFrame(animator);
-}
-
-Player.unlockedCostumes = getUnlockedCostumes_as_ary();
-globals.b = Levels.generate(globals.lvl);
-animator();
+}, 16);
