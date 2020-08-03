@@ -1,9 +1,6 @@
 import Levels from "./Levels.js";
-import { Canvas } from "./Canvas.js";
-import EventHandler from "./EventHandler.js";
 import globals from "./globals.js";
 import Player from "./Player.js";
-import Vector from "./Vector.js";
 import Draw from "./Draw.js";
 
 let draw = new Draw(globals.canvas);
