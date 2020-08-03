@@ -3,17 +3,6 @@ import Vector from "./Vector.js";
 /** @typedef {[number, number]} Position */
 void (0);
 
-export const SPRITE = {
-   DEFAULT: 0,
-   INVERTED_COLORS: 1,
-   DEMON: 2,
-   ZOMBIE: 3,
-   GHOST: 4,
-   UPSIDE_DOWN: 5,
-   JAILED: 6,
-   MUSHROOM: 7,
-};
-
 export class Canvas {
    constructor() {
       this.colorsInverted = false;
@@ -46,8 +35,9 @@ export class Canvas {
       this.ctx.fillStyle = fillStyle;
       if (this.colorsInverted) {
          fillStyle = this.ctx.fillStyle;
-         if (fillStyle.length === 9) {
-            this.ctx.fillStyle = `#${(0xFFFFFFFF ^ parseInt(fillStyle.slice(1), 16)).toString(16).padStart(8, "0")}`;
+         if (fillStyle.slice(0, 4) === "rgba") {
+            let rgba = fillStyle.match(/[0-9.]+/g);
+            this.ctx.fillStyle = `rgba(${255 - rgba[0]},${255 - rgba[1]},${255 - rgba[2]},${rgba[3]})`;
          } else {
             this.ctx.fillStyle = `#${(0xFFFFFF ^ parseInt(fillStyle.slice(1), 16)).toString(16).padStart(6, "0")}`;
          }
@@ -119,131 +109,5 @@ export class Canvas {
    }
    wrapText(str, position, lineHeight) {
       this._wrapText(str, this.camera.format(position), lineHeight);
-   }
-   drawChar(sprite, position, eyePosition) {
-      if (!eyePosition) { eyePosition = 0 }
-      position = new Vector(position);
-      let { x, y } = position;
-      switch (sprite) {
-         case SPRITE.DEFAULT:
-            this.fillStyle("#F00");
-            this.rect([x - 15, y - 15], [30, 10]);
-            this.fillStyle("#FF0");
-            this.roundedRect([x - 15, y - 15], [30, 30], 9);
-            this.fillStyle("#00F");
-            this.circle([x - 6 + eyePosition, y - 3], 3);
-            this.circle([x + 6 + eyePosition, y - 3], 3);
-            this.fillStyle("#000");
-            this.roundedRect([x - 7, y + 4], [14, 5], 2);
-            return;
-         case SPRITE.INVERTED_COLORS:
-            this.fillStyle("#0FF");
-            this.rect([x - 15, y - 15], [30, 10]);
-            this.fillStyle("#00F");
-            this.roundedRect([x - 15, y - 15], [30, 30], 9);
-            this.fillStyle("#FF0");
-            this.circle([x - 6 + eyePosition, y - 3], 3);
-            this.circle([x + 6 + eyePosition, y - 3], 3);
-            this.fillStyle("#FFF");
-            this.roundedRect([x - 7, y + 4], [14, 5], 2);
-            return;
-         case SPRITE.DEMON:
-            this.fillStyle("#FFF");
-            this.rect([x - 15, y - 15], [30, 10]);
-            this.fillStyle("#F00");
-            this.roundedRect([x - 15, y - 15], [30, 30], 9);
-            this.fillStyle("#000");
-            this.circle([x - 6 + eyePosition, y - 3], 3);
-            this.circle([x + 6 + eyePosition, y - 3], 3);
-            this.fillStyle("#000");
-            this.roundedRect([x - 7, y + 4], [14, 5], 2);
-            return;
-         case SPRITE.ZOMBIE:
-            this.fillStyle("#000");
-            this.rect([x - 15, y - 15], [30, 10]);
-            this.fillStyle("#888");
-            this.roundedRect([x - 15, y - 15], [30, 30], 9);
-            this.fillStyle("#fff");
-            this.circle([x - 6 + eyePosition, y - 3], 3);
-            this.circle([x + 6 + eyePosition, y - 3], 3);
-            this.fillStyle("#000");
-            this.circle([x - 6 + eyePosition, y - 3], 2);
-            this.circle([x + 6 + eyePosition, y - 3], 2);
-            this.ctx.fillStyle = this.colorsInverted ? "rgba(0,255,255,0.4)" : "rgba(255,0,0,0.4)";
-            this.roundedRect([x - 7, y + 4], [14, 5], 2);
-            this.polygon([x + 13, y + 2], [x + 8, y + 10], [x + 8, y + 11], [x + 13, y + 3]);
-            return;
-         case SPRITE.GHOST:
-            this.fillStyle("#fff");
-            this.rect([x - 15, y - 15], [30, 10]);
-            this.fillStyle("#fff");
-            this.roundedRect([x - 15, y - 15], [30, 30], 9);
-            this.fillStyle("#000");
-            this.circle([x - 6 + eyePosition, y - 3], 3);
-            this.circle([x + 6 + eyePosition, y - 3], 3);
-            this.roundedRect([x - 7, y + 4], [14, 5], 2);
-            return;
-         case SPRITE.UPSIDE_DOWN:
-            this.fillStyle("#F00");
-            this.rect([x - 15, y + 5], [30, 10]);
-            this.fillStyle("#FF0");
-            this.roundedRect([x - 15, y - 15], [30, 30], 9);
-            this.fillStyle("#00F");
-            this.circle([x - 6 - eyePosition, y + 3], 3);
-            this.circle([x + 6 - eyePosition, y + 3], 3);
-            this.fillStyle("#000");
-            this.roundedRect([x - 7, y - 9], [14, 5], 2);
-            return;
-         case SPRITE.JAILED:
-            this.fillStyle("#000");
-            this.rect([x - 11, y - 11], [22, 22]);
-            this.fillStyle("#f00");
-            this.circle([x - 6 + eyePosition, y - 3], 3);
-            this.circle([x + 6 + eyePosition, y - 3], 3);
-            this.roundedRect([x - 7, y + 4], [14, 5], 2);
-            this.fillStyle("#666");
-            this.rect([x - 15, y - 15], [4, 30]);
-            this.rect([x - 15, y - 15], [30, 4]);
-            this.rect([x + 11, y - 15], [4, 30]);
-            this.rect([x - 15, y + 11], [30, 4]);
-            this.rect([x - 11, y - 7], [22, 4]);
-            this.rect([x - 11, y + 3], [22, 4]);
-            return;
-         case SPRITE.MUSHROOM:
-            this.fillStyle("#f00");
-            this.rect([x - 10, y - 14], [20, 30]);
-            this.rect([x - 6, y - 16], [12, 4]);
-            this.rect([x - 12, y - 12], [24, 26]);
-            this.rect([x - 14, y - 10], [28, 20]);
-            this.rect([x - 16, y - 6], [32, 14]);
-            this.fillStyle("#000");
-            this.rect([x - 8, y - 12], [16, 26]);
-            this.rect([x - 4, y - 14], [8, 20]);
-            this.rect([x - 10, y - 6], [20, 18]);
-            this.rect([x - 8, y - 12], [16, 26]);
-            this.rect([x - 14, y - 4], [28, 6]);
-            this.rect([x - 12, y - 8], [24, 4]);
-            this.fillStyle("#00f");
-            this.rect([x - 2, y - 14], [4, 8]);
-            this.rect([x - 4, y - 10], [8, 4]);
-            this.rect([x + 4, y - 8], [4, 4]);
-            this.rect([x - 8, y - 8], [4, 4]);
-            this.rect([x - 10, y - 10], [2, 4]);
-            this.rect([x + 8, y - 10], [2, 4]);
-            this.rect([x + 6, y - 4], [2, 4]);
-            this.rect([x + 6, y], [4, 4]);
-            this.rect([x + 10, y + 2], [4, 4]);
-            this.rect([x + 4, y + 2], [2, 2]);
-            this.rect([x - 8, y - 4], [2, 4]);
-            this.rect([x - 10, y], [4, 4]);
-            this.rect([x - 14, y + 2], [4, 4]);
-            this.rect([x - 6, y + 2], [2, 2]);
-            this.fillStyle("#f00");
-            this.rect([x - 10, y + 4], [2, 4]);
-            this.rect([x + 8, y + 4], [2, 4]);
-            this.rect([x - 10, y + 4], [20, 2]);
-            this.rect([x - 4 + eyePosition, y + 6], [2, 4]);
-            this.rect([x + 2 + eyePosition, y + 6], [2, 4]);
-      }
    }
 }

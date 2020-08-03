@@ -4,10 +4,12 @@ import EventHandler from "./EventHandler.js";
 import globals from "./globals.js";
 import Player from "./Player.js";
 import Vector from "./Vector.js";
+import Draw from "./Draw.js";
+
+let draw = new Draw(globals.canvas);
 
 let pau = 0;
 let rsr = 1;
-let player_costume = 0;
 let paused = 0;
 let clickin = null;
 
@@ -22,7 +24,6 @@ function getUnlockedCostumes_as_ary() {
    }
    return parseInt(cookie.slice(4), 36).toString(2).split("").reverse().map((v, i) => +v ? i : -1).filter(i => i > -1);
 };
-
 
 function update() {
    if (!paused) {
@@ -98,72 +99,22 @@ function update() {
       Player.position = Player.position.add(Player.velocity);
       pau = globals.start ? Math.floor((Date.now() - globals.start) / 100) / 10 : 0;
    }
-   globals.canvas.fillStyle("#000");
-   globals.canvas.rect([0, 0], globals.canvas.size);
-   globals.canvas.camera.enable();
-   globals.b.forEach(b => b.img(globals.canvas));
-   globals.canvas.camera.disable();
-   globals.canvas.fillStyle("#FFF");
-   globals.canvas.rect([0, Math.round(Player.position.y) + globals.canvas.halfsize.y + 15], globals.canvas.size);
-   globals.canvas.rect([-Math.round(Player.position.x) - 515, -1], globals.canvas.size.scaleXY(0.5, 1));
-   globals.canvas.rect([globals.canvas.halfsize.x - Math.round(Player.position.x) + 515, -1], globals.canvas.size);
-   globals.canvas.drawChar(player_costume, globals.canvas.halfsize, Player.eyePosition);
-   globals.canvas.fillStyle("#32C800");
-   globals.canvas.rect([0, 0], [100, globals.canvas.size.y]);
-   globals.canvas.rect([globals.canvas.size.x - 100, 0], [100, globals.canvas.size.y]);
-   globals.canvas.fillStyle("#0F0");
-   globals.canvas.polygon([0, 0], [100, 50], [globals.canvas.size.x - 100, 50], [globals.canvas.size.x, 0]);
-   globals.canvas.fillStyle("#009600");
-   globals.canvas.polygon([0, globals.canvas.size.y], [100, globals.canvas.size.y - 50], [globals.canvas.size.x - 100, globals.canvas.size.y - 50], [globals.canvas.size.x, globals.canvas.size.y]);
-   globals.canvas.fillStyle("#000");
-   globals.canvas.font("30px Monospace");
-   globals.canvas.text("Neon Prison", [globals.canvas.halfsize.x, 35]);
-   globals.canvas.font("25px Monospace");
-   globals.canvas.text("Level:", [50, globals.canvas.halfsize.y - 75]);
-   globals.canvas.text(globals.lvl, [50, globals.canvas.halfsize.y - 45]);
-   globals.canvas.text("Deaths:", [50, globals.canvas.halfsize.y + 5]);
-   globals.canvas.text(Player.deaths, [50, globals.canvas.halfsize.y + 35]);
-   globals.canvas.text("Time:", [50, globals.canvas.halfsize.y + 95]);
-   globals.canvas.text(pau, [50, globals.canvas.halfsize.y + 115]);
 
-   globals.canvas.font("15px Monospace");
-   let { subtext } = Levels[globals.lvl];
-   if (Levels[globals.lvl].sneaky && globals.deaths === 0) {
-      subtext = "You sneaky custard!\nI haven't gotten this far yet.";
-   }
-   globals.canvas.wrapText(subtext, [globals.canvas.halfsize.x, globals.canvas.size.y - 27], 18);
-
-   globals.canvas.fillStyle(paused ? "#fff" : "#000");
-   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 45);
-   globals.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 20);
-
-   globals.canvas.polygon(...[[28, 22], [35.5, 1], [0, 0], [11, 33], [-11, 33], [0, 0], [-28, 22], [-35.5, 1], [0, 0], [11, -33], [28, -22], [0, 0], [-11, -33], [-28, -22], [0, 0]].map(position => new Vector(position).add([globals.canvas.size.x - 50, globals.canvas.halfsize.y])));
-   globals.canvas.polygon(...[[10, 16], [28, 22], [35.5, 1], [19, -7], [28, -22], [11, -33], [0, -20], [-11, -33], [-28, -22], [-19, -7], [-35.5, 1], [-28, 22], [-10, 16], [-11, 33], [11, 33]].map(position => new Vector(position).add([globals.canvas.size.x - 50, globals.canvas.halfsize.y])));
-   globals.canvas.fillStyle(paused ? "#fff" : "#000");
-   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 12);
-   globals.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 5);
+   
+   draw.background();
+   draw.boxes(globals.b);
+   draw.walls(Player.position);
+   draw.player(Player);
+   draw.frame();
+   draw.info(globals.lvl, Player.deaths, pau);
+   draw.subtext(globals.lvl, Player.deaths);
+   draw.gear(paused);
+   
    if (paused) {
-      if (globals.invert) { globals.canvas.ctx.fillStyle = "rgba(255,255,255,0.25)" } else { globals.canvas.ctx.fillStyle = "rgba(0,0,0,0.25)" }
-      globals.canvas.rect([100, 50], globals.canvas.size.subtract([200, 100]));
-      globals.canvas.fillStyle("#fff");
-      globals.canvas.font("30px Monospace");
-      globals.canvas.text("Settings", [globals.canvas.halfsize.x, 100]);
-      globals.canvas.roundedRect([150, 150], [16, 16], 3);
-      globals.canvas.roundedRect([150, 200], [16, 16], 3);
-      globals.canvas.font("24px Monospace");
-      globals.canvas.ctx.textAlign = "left";
-      globals.canvas.text("Invert colors", [180, 166]);
-      globals.canvas.text("Sneaky Custard Mode", [180, 216]);
-      globals.canvas.ctx.textAlign = "center";
-      globals.canvas.text("Choose your character", [globals.canvas.halfsize.x, globals.canvas.size.y - 100]);
-      globals.canvas.fillStyle("#808080");
-      if (globals.canvas.colorsInverted) { globals.canvas.circle([158, 158], 5) }
-      if (globals.sneaky) { globals.canvas.circle([158, 208], 5) }
-      for (let i in Player.unlockedCostumes) {
-         globals.canvas.drawChar(Player.unlockedCostumes[i], [120 + i * 50, globals.canvas.size.y - 70]);
-      }
+      draw.blankout();
+      draw.variantMenu(globals.canvas.colorsInverted, globals.sneaky);
+      draw.characterMenu(Player.unlockedCostumes);
+      
       if (globals.evts.clicked) {
          if (clickin === null) {
             if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && !clickin) {
@@ -195,7 +146,7 @@ function update() {
          if (globals.canvas.size.y - 55 > globals.evts.mouse.y && globals.evts.mouse.y > globals.canvas.size.y - 85) {
             Player.unlockedCostumes.forEach((costume, i) => {
                if (105 + i * 50 < globals.evts.mouse.x && globals.evts.mouse.x < 135 + i * 50) {
-                  player_costume = costume;
+                  Player.costume = costume;
                   clickin = null;
                }
             });

@@ -38,7 +38,7 @@ export default class Box {
       this.col = Box.colors[this.type] || "#FFF";
       this.bright = 255;
       this.fake = false;
-      this.draw = this.type !== "N";
+      this.visible = this.type !== "N";
    }
    checkLeft(Player) {
       return Player.position.x >= this.position.x + this.size.x + 10
@@ -114,7 +114,7 @@ export default class Box {
          this.senseDown(Player);
       }
       if (this.type === "N") {
-         this.draw = this.senseLeft(Player)
+         this.visible = this.senseLeft(Player)
                   || this.senseUp(Player)
                   || this.senseRight(Player)
                   || this.senseDown(Player);
@@ -162,34 +162,31 @@ export default class Box {
             return "levelup";
       }
       if (this.type === "*") {
-         this.draw = false;
+         this.visible = false;
          if (!Player.unlockedCostumes.includes(this.costume) && Player.gained === 0) {
-            this.draw = true;
+            this.visible = true;
             if (this.checkInside(Player)) {
                Player.gained = this.costume;
             }
          }
       }
    }
-   img(canvas) {
-      if (this.type === "*") {
-         if (this.draw) {
-            canvas.drawChar(this.costume, this.position.add([15, 15]).invertY(), 0);
-         }
-      } else {
-         if (this.fake) {
-            const hex = "0123456789abcdef";
-            this.bright -= (this.bright >= 100);
-            let brightness = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
-            if(this.type === "F") {
-               this.col = `#${brightness}${brightness}${brightness}`
-            } else {
-               this.col = `#${brightness}0000`;
+   draw(draw) {
+      if(this.visible) {
+         if (this.type === "*") {
+            draw.character(this.costume, this.position.add([15, 15]).invertY(), 0);
+         } else {
+            if (this.fake) {
+               const hex = "0123456789abcdef";
+               this.bright -= (this.bright >= 100);
+               let brightness = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
+               if(this.type === "F") {
+                  this.col = `#${brightness}${brightness}${brightness}`
+               } else {
+                  this.col = `#${brightness}0000`;
+               }
             }
-         }
-         canvas.fillStyle(this.col);
-         if (this.draw) {
-            canvas.rect(this.position.invertY(), this.size.invertY());
+            draw.coloredRect(this.col, this.position.invertY(), this.size.invertY());
          }
       }
    }

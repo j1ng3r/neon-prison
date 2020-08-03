@@ -10,6 +10,7 @@ const Player = {
    velocity: Vector.zero(),
    standing: true,
    gained: 0,
+   costume: 0,
    reset() {
       Player.position = Vector.zero();
       Player.velocity = Vector.zero();
