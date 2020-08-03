@@ -1,16 +1,14 @@
 import Levels from "./Levels.js";
 import { Canvas } from "./Canvas.js";
+import EventHandler from "./EventHandler.js";
 import globals from "./globals.js";
 import Player from "./Player.js";
 import Vector from "./Vector.js";
 
-document.cookie = "_d_=0";
 let pau = 0;
 let rsr = 1;
 let player_costume = 0;
 let paused = 0;
-let mouse = Vector.zero();
-let clicked = false;
 let clickin = null;
 
 function setCostumes(ary_unlockedCostumes) {
@@ -22,71 +20,34 @@ function getUnlockedCostumes_as_ary() {
    if (cookie === undefined) {
       cookie = document.cookie = "_d_=1";
    }
-   return parseInt(cookie.slice(4), 36).toString(2).split("").map((v, i) => +v ? i : -1).filter(i => i > -1);
+   return parseInt(cookie.slice(4), 36).toString(2).split("").reverse().map((v, i) => +v ? i : -1).filter(i => i > -1);
 };
 
-let canvas = new Canvas();
-canvas.camera.follow(Player);
-canvas.setElement(document.getElementById("c"));
-
-canvas.element.onkeydown = function (evt) {
-   globals.keys[evt.keyCode || evt.which] = true;
-   evt.preventDefault();
-};
-canvas.element.onkeyup = function (evt) {
-   globals.keys[evt.keyCode || evt.which] = false;
-};
-function getMouse(evt) {
-   mouse = new Vector(evt.clientX - canvas.element.getBoundingClientRect().left,
-      evt.clientY - canvas.element.getBoundingClientRect().top);
-}
-canvas.element.addEventListener("mousedown", evt => {
-   getMouse(evt);
-   clicked = 1;
-   canvas.element.focus();
-}, false);
-canvas.element.addEventListener("mouseup", evt => {
-   getMouse(evt);
-   clicked = 0;
-}, false);
-if (!Player.unlockedCostumes.length) {
-   globals.setCostumes(Player.unlockedCostumes = [0]);
-}
-
-function translatedPoly(...args) {
-   canvas.ctx.beginPath();
-   canvas.ctx.moveTo(args[0] + canvas.size.x - 50, args[1] + canvas.halfsize.y);
-   for (let i = 2; i < Math.floor(args.length / 2) * 2; i += 2) {
-      canvas.ctx.lineTo(args[i] + canvas.size.x - 50, args[i + 1] + canvas.halfsize.y);
-   }
-   canvas.ctx.closePath();
-   canvas.ctx.fill();
-}
 
 function update() {
    if (!paused) {
-      if(globals.keys[84]) {
+      if(globals.evts.keys[84]) {
          globals.lvl = +prompt("Which level?") || globals.lvl;
          Player.reset();
          globals.time = Date.now();
          globals.b = Levels.generate(globals.lvl);
-         globals.keys[84] = false;
+         globals.evts.keys[84] = false;
          return;
       }
-      if (globals.keys[83]) { Player.die() }
-      if (globals.keys[82] && rsr) {
+      if (globals.evts.keys[83]) { Player.die() }
+      if (globals.evts.keys[82] && rsr) {
          Player.die();
          rsr = 0;
       }
-      if (!rsr && !globals.keys[82]) { rsr = 1 }
-      if (globals.keys[37] || globals.keys[65]) {
+      if (!rsr && !globals.evts.keys[82]) { rsr = 1 }
+      if (globals.evts.keys[37] || globals.evts.keys[65]) {
          Player.velocity.x -= 1;
          Player.eyePosition -= 0.5;
          if (!globals.start) {
             globals.start = Date.now();
          }
       }
-      if (globals.keys[39] || globals.keys[68]) {
+      if (globals.evts.keys[39] || globals.evts.keys[68]) {
          Player.velocity.x += 1;
          Player.eyePosition += 0.5;
          if (!globals.start) {
@@ -95,7 +56,7 @@ function update() {
       }
       if (Player.standing) {
          Player.velocity.y = 0;
-         if (globals.keys[38] || globals.keys[87]) {
+         if (globals.evts.keys[38] || globals.evts.keys[87]) {
             Player.velocity.y = 13;
             if (!globals.start) {
                globals.start = Date.now();
@@ -123,8 +84,8 @@ function update() {
             globals.lvl++;
             if (Player.gained) {
                Player.unlockedCostumes.push(Player.gained);
-               globals.setCostumes(Player.unlockedCostumes);
-               Player.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
+               setCostumes(Player.unlockedCostumes);
+               Player.unlockedCostumes = getUnlockedCostumes_as_ary();
             }
             Player.reset();
             globals.time = Date.now();
@@ -137,103 +98,103 @@ function update() {
       Player.position = Player.position.add(Player.velocity);
       pau = globals.start ? Math.floor((Date.now() - globals.start) / 100) / 10 : 0;
    }
-   canvas.fillStyle("#000");
-   canvas.rect([0, 0], canvas.size);
-   canvas.camera.enable();
-   globals.b.forEach(b => b.img(canvas));
-   canvas.camera.disable();
-   canvas.fillStyle("#FFF");
-   canvas.rect([0, Math.round(Player.position.y) + canvas.halfsize.y + 15], canvas.size);
-   canvas.rect([-Math.round(Player.position.x) - 515, -1], canvas.size.scaleXY(0.5, 1));
-   canvas.rect([canvas.halfsize.x - Math.round(Player.position.x) + 515, -1], canvas.size);
-   canvas.drawChar(player_costume, canvas.halfsize, Player.eyePosition);
-   canvas.fillStyle("#32C800");
-   canvas.rect([0, 0], [100, canvas.size.y]);
-   canvas.rect([canvas.size.x - 100, 0], [100, canvas.size.y]);
-   canvas.fillStyle("#0F0");
-   canvas.polygon([0, 0], [100, 50], [canvas.size.x - 100, 50], [canvas.size.x, 0]);
-   canvas.fillStyle("#009600");
-   canvas.polygon([0, canvas.size.y], [100, canvas.size.y - 50], [canvas.size.x - 100, canvas.size.y - 50], [canvas.size.x, canvas.size.y]);
-   canvas.fillStyle("#000");
-   canvas.font("30px Monospace");
-   canvas.text("Neon Prison", [canvas.halfsize.x, 35]);
-   canvas.font("25px Monospace");
-   canvas.text("Level:", [50, canvas.halfsize.y - 75]);
-   canvas.text(globals.lvl, [50, canvas.halfsize.y - 45]);
-   canvas.text("Deaths:", [50, canvas.halfsize.y + 5]);
-   canvas.text(Player.deaths, [50, canvas.halfsize.y + 35]);
-   canvas.text("Time:", [50, canvas.halfsize.y + 95]);
-   canvas.text(pau, [50, canvas.halfsize.y + 115]);
+   globals.canvas.fillStyle("#000");
+   globals.canvas.rect([0, 0], globals.canvas.size);
+   globals.canvas.camera.enable();
+   globals.b.forEach(b => b.img(globals.canvas));
+   globals.canvas.camera.disable();
+   globals.canvas.fillStyle("#FFF");
+   globals.canvas.rect([0, Math.round(Player.position.y) + globals.canvas.halfsize.y + 15], globals.canvas.size);
+   globals.canvas.rect([-Math.round(Player.position.x) - 515, -1], globals.canvas.size.scaleXY(0.5, 1));
+   globals.canvas.rect([globals.canvas.halfsize.x - Math.round(Player.position.x) + 515, -1], globals.canvas.size);
+   globals.canvas.drawChar(player_costume, globals.canvas.halfsize, Player.eyePosition);
+   globals.canvas.fillStyle("#32C800");
+   globals.canvas.rect([0, 0], [100, globals.canvas.size.y]);
+   globals.canvas.rect([globals.canvas.size.x - 100, 0], [100, globals.canvas.size.y]);
+   globals.canvas.fillStyle("#0F0");
+   globals.canvas.polygon([0, 0], [100, 50], [globals.canvas.size.x - 100, 50], [globals.canvas.size.x, 0]);
+   globals.canvas.fillStyle("#009600");
+   globals.canvas.polygon([0, globals.canvas.size.y], [100, globals.canvas.size.y - 50], [globals.canvas.size.x - 100, globals.canvas.size.y - 50], [globals.canvas.size.x, globals.canvas.size.y]);
+   globals.canvas.fillStyle("#000");
+   globals.canvas.font("30px Monospace");
+   globals.canvas.text("Neon Prison", [globals.canvas.halfsize.x, 35]);
+   globals.canvas.font("25px Monospace");
+   globals.canvas.text("Level:", [50, globals.canvas.halfsize.y - 75]);
+   globals.canvas.text(globals.lvl, [50, globals.canvas.halfsize.y - 45]);
+   globals.canvas.text("Deaths:", [50, globals.canvas.halfsize.y + 5]);
+   globals.canvas.text(Player.deaths, [50, globals.canvas.halfsize.y + 35]);
+   globals.canvas.text("Time:", [50, globals.canvas.halfsize.y + 95]);
+   globals.canvas.text(pau, [50, globals.canvas.halfsize.y + 115]);
 
-   canvas.font("15px Monospace");
+   globals.canvas.font("15px Monospace");
    let { subtext } = Levels[globals.lvl];
    if (Levels[globals.lvl].sneaky && globals.deaths === 0) {
       subtext = "You sneaky custard!\nI haven't gotten this far yet.";
    }
-   canvas.wrapText(subtext, [canvas.halfsize.x, canvas.size.y - 27], 18);
+   globals.canvas.wrapText(subtext, [globals.canvas.halfsize.x, globals.canvas.size.y - 27], 18);
 
-   canvas.fillStyle(paused ? "#fff" : "#000");
-   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 45);
-   canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 20);
+   globals.canvas.fillStyle(paused ? "#fff" : "#000");
+   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 45);
+   globals.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
+   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 20);
 
-   translatedPoly(28, 22, 35.5, 1, 0, 0, 11, 33, -11, 33, 0, 0, -28, 22, -35.5, 1, 0, 0, 11, -33, 28, -22, 0, 0, -11, -33, -28, -22, 0, 0);
-   translatedPoly(10, 16, 28, 22, 35.5, 1, 19, -7, 28, -22, 11, -33, 0, -20, -11, -33, -28, -22, -19, -7, -35.5, 1, -28, 22, -10, 16, -11, 33, 11, 33);
-   canvas.fillStyle(paused ? "#fff" : "#000");
-   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 12);
-   canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-   canvas.circle([canvas.size.x - 50, canvas.halfsize.y], 5);
+   globals.canvas.polygon(...[[28, 22], [35.5, 1], [0, 0], [11, 33], [-11, 33], [0, 0], [-28, 22], [-35.5, 1], [0, 0], [11, -33], [28, -22], [0, 0], [-11, -33], [-28, -22], [0, 0]].map(position => new Vector(position).add([globals.canvas.size.x - 50, globals.canvas.halfsize.y])));
+   globals.canvas.polygon(...[[10, 16], [28, 22], [35.5, 1], [19, -7], [28, -22], [11, -33], [0, -20], [-11, -33], [-28, -22], [-19, -7], [-35.5, 1], [-28, 22], [-10, 16], [-11, 33], [11, 33]].map(position => new Vector(position).add([globals.canvas.size.x - 50, globals.canvas.halfsize.y])));
+   globals.canvas.fillStyle(paused ? "#fff" : "#000");
+   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 12);
+   globals.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
+   globals.canvas.circle([globals.canvas.size.x - 50, globals.canvas.halfsize.y], 5);
    if (paused) {
-      if (globals.invert) { canvas.ctx.fillStyle = "rgba(255,255,255,0.25)" } else { canvas.ctx.fillStyle = "rgba(0,0,0,0.25)" }
-      canvas.rect([100, 50], canvas.size.subtract([200, 100]));
-      canvas.fillStyle("#fff");
-      canvas.font("30px Monospace");
-      canvas.text("Settings", [canvas.halfsize.x, 100]);
-      canvas.roundedRect([150, 150], [16, 16], 3);
-      canvas.roundedRect([150, 200], [16, 16], 3);
-      canvas.font("24px Monospace");
-      canvas.ctx.textAlign = "left";
-      canvas.text("Invert colors", [180, 166]);
-      canvas.text("Sneaky Custard Mode", [180, 216]);
-      canvas.ctx.textAlign = "center";
-      canvas.text("Choose your character", [canvas.halfsize.x, canvas.size.y - 100]);
-      canvas.fillStyle("#808080");
-      if (canvas.colorsInverted) { canvas.circle([158, 158], 5) }
-      if (globals.sneaky) { canvas.circle([158, 208], 5) }
+      if (globals.invert) { globals.canvas.ctx.fillStyle = "rgba(255,255,255,0.25)" } else { globals.canvas.ctx.fillStyle = "rgba(0,0,0,0.25)" }
+      globals.canvas.rect([100, 50], globals.canvas.size.subtract([200, 100]));
+      globals.canvas.fillStyle("#fff");
+      globals.canvas.font("30px Monospace");
+      globals.canvas.text("Settings", [globals.canvas.halfsize.x, 100]);
+      globals.canvas.roundedRect([150, 150], [16, 16], 3);
+      globals.canvas.roundedRect([150, 200], [16, 16], 3);
+      globals.canvas.font("24px Monospace");
+      globals.canvas.ctx.textAlign = "left";
+      globals.canvas.text("Invert colors", [180, 166]);
+      globals.canvas.text("Sneaky Custard Mode", [180, 216]);
+      globals.canvas.ctx.textAlign = "center";
+      globals.canvas.text("Choose your character", [globals.canvas.halfsize.x, globals.canvas.size.y - 100]);
+      globals.canvas.fillStyle("#808080");
+      if (globals.canvas.colorsInverted) { globals.canvas.circle([158, 158], 5) }
+      if (globals.sneaky) { globals.canvas.circle([158, 208], 5) }
       for (let i in Player.unlockedCostumes) {
-         canvas.drawChar(Player.unlockedCostumes[i], [120 + i * 50, canvas.size.y - 70]);
+         globals.canvas.drawChar(Player.unlockedCostumes[i], [120 + i * 50, globals.canvas.size.y - 70]);
       }
-      if (clicked) {
+      if (globals.evts.clicked) {
          if (clickin === null) {
-            if (mouse.x > 150 && mouse.x < 166 && !clickin) {
-               if (mouse.y > 150 && mouse.y < 166) {
+            if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && !clickin) {
+               if (globals.evts.mouse.y > 150 && globals.evts.mouse.y < 166) {
                   clickin = "invert";
                }
-               if (mouse.y > 200 && mouse.y < 216) {
+               if (globals.evts.mouse.y > 200 && globals.evts.mouse.y < 216) {
                   clickin = "wan";
                }
             }
             // Allot a lot of lots to my parking lot.
-            if (canvas.size.y - 55 > mouse.y && mouse.y > canvas.size.y - 85) {
+            if (globals.canvas.size.y - 55 > globals.evts.mouse.y && globals.evts.mouse.y > globals.canvas.size.y - 85) {
                Player.unlockedCostumes.forEach((costume, i) => {
-                  if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
+                  if (105 + i * 50 < globals.evts.mouse.x && globals.evts.mouse.x < 135 + i * 50) {
                      clickin = i;
                   }
                });
             }
          }
       } else {
-         if (mouse.x > 150 && mouse.x < 166 && mouse.y > 200 && mouse.y < 216 && clickin === "wan") {
+         if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && globals.evts.mouse.y > 200 && globals.evts.mouse.y < 216 && clickin === "wan") {
             globals.sneaky = !globals.sneaky;
             clickin = null;
          }
-         if (mouse.x > 150 && mouse.x < 166 && mouse.y > 150 && mouse.y < 166 && clickin === "invert") {
-            canvas.invertColors();
+         if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && globals.evts.mouse.y > 150 && globals.evts.mouse.y < 166 && clickin === "invert") {
+            globals.canvas.invertColors();
             clickin = null;
          }
-         if (canvas.size.y - 55 > mouse.y && mouse.y > canvas.size.y - 85) {
+         if (globals.canvas.size.y - 55 > globals.evts.mouse.y && globals.evts.mouse.y > globals.canvas.size.y - 85) {
             Player.unlockedCostumes.forEach((costume, i) => {
-               if (105 + i * 50 < mouse.x && mouse.x < 135 + i * 50) {
+               if (105 + i * 50 < globals.evts.mouse.x && globals.evts.mouse.x < 135 + i * 50) {
                   player_costume = costume;
                   clickin = null;
                }
@@ -241,12 +202,12 @@ function update() {
          }
       }
    }
-   if (clicked) {
-      if (((mouse.x - canvas.size.x + 50) * (mouse.x - canvas.size.x + 50) + (mouse.y - canvas.halfsize.y) * (mouse.y - canvas.halfsize.y)) < 2025 && !clickin) {
+   if (globals.evts.clicked) {
+      if (((globals.evts.mouse.x - globals.canvas.size.x + 50) * (globals.evts.mouse.x - globals.canvas.size.x + 50) + (globals.evts.mouse.y - globals.canvas.halfsize.y) * (globals.evts.mouse.y - globals.canvas.halfsize.y)) < 2025 && !clickin) {
          clickin = "button";
       }
    } else {
-      if (((mouse.x - canvas.size.x + 50) * (mouse.x - canvas.size.x + 50) + (mouse.y - canvas.halfsize.y) * (mouse.y - canvas.halfsize.y)) < 2025 && clickin === "button") {
+      if (((globals.evts.mouse.x - globals.canvas.size.x + 50) * (globals.evts.mouse.x - globals.canvas.size.x + 50) + (globals.evts.mouse.y - globals.canvas.halfsize.y) * (globals.evts.mouse.y - globals.canvas.halfsize.y)) < 2025 && clickin === "button") {
          paused = !paused;
          globals.start = Date.now() - pau * 1000;
       }
@@ -262,6 +223,6 @@ function animator() {
    requestAnimationFrame(animator);
 }
 
-Player.unlockedCostumes = globals.getUnlockedCostumes_as_ary();
+Player.unlockedCostumes = getUnlockedCostumes_as_ary();
 globals.b = Levels.generate(globals.lvl);
 animator();

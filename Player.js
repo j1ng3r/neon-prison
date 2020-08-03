@@ -17,7 +17,7 @@ const Player = {
       Player.gained = 0;
    },
    die() {
-      if (globals.sneaky || globals.keys[83]) {
+      if (globals.sneaky || globals.evts.keys[83]) {
          Player.deaths = 0;
          globals.lvl = 1;
          globals.start = 0;
@@ -29,5 +29,7 @@ const Player = {
       globals.b = Levels.generate(globals.lvl);
    },
 };
+
+globals.canvas.camera.follow(Player);
 
 export default Player;
