@@ -123,7 +123,10 @@ function update() {
                }
             }
             // Allot a lot of lots to my parking lot.
-            if (globals.canvas.size.y - 55 > globals.evts.mouse.y && globals.evts.mouse.y > globals.canvas.size.y - 85) {
+            if (
+               globals.canvas.size.y - 55 > globals.evts.mouse.y
+               && globals.evts.mouse.y > globals.canvas.size.y - 85
+            ) {
                Player.unlockedCostumes.forEach((costume, i) => {
                   if (105 + i * 50 < globals.evts.mouse.x && globals.evts.mouse.x < 135 + i * 50) {
                      clickin = i;
@@ -132,11 +135,23 @@ function update() {
             }
          }
       } else {
-         if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && globals.evts.mouse.y > 200 && globals.evts.mouse.y < 216 && clickin === "wan") {
+         if (
+            globals.evts.mouse.x > 150
+            && globals.evts.mouse.x < 166
+            && globals.evts.mouse.y > 200
+            && globals.evts.mouse.y < 216
+            && clickin === "wan"
+         ) {
             globals.sneaky = !globals.sneaky;
             clickin = null;
          }
-         if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && globals.evts.mouse.y > 150 && globals.evts.mouse.y < 166 && clickin === "invert") {
+         if (
+            globals.evts.mouse.x > 150
+            && globals.evts.mouse.x < 166
+            && globals.evts.mouse.y > 150
+            && globals.evts.mouse.y < 166
+            && clickin === "invert"
+         ) {
             globals.canvas.invertColors();
             clickin = null;
          }
@@ -165,15 +180,5 @@ function update() {
 
 Player.unlockedCostumes = getUnlockedCostumes_as_ary();
 globals.b = Levels.generate(globals.lvl);
-function animator() {
-   try {
-      update();
-   } catch (e) {
-      console.error(e);
-   }
-   requestAnimationFrame(animator);
-}
 
-Player.unlockedCostumes = getUnlockedCostumes_as_ary();
-globals.b = Levels.generate(globals.lvl);
-animator();
+setInterval(update, 17);

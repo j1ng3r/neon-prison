@@ -64,8 +64,48 @@ export default class Draw {
       this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 45);
       this.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
       this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 20);
-      this.canvas.polygon(...[[28, 22], [35.5, 1], [0, 0], [11, 33], [-11, 33], [0, 0], [-28, 22], [-35.5, 1], [0, 0], [11, -33], [28, -22], [0, 0], [-11, -33], [-28, -22], [0, 0]].map(position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y])));
-      this.canvas.polygon(...[[10, 16], [28, 22], [35.5, 1], [19, -7], [28, -22], [11, -33], [0, -20], [-11, -33], [-28, -22], [-19, -7], [-35.5, 1], [-28, 22], [-10, 16], [-11, 33], [11, 33]].map(position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y])));
+      this.canvas.polygon(
+         ...[
+            [28, 22],
+            [35.5, 1],
+            [0, 0],
+            [11, 33],
+            [-11, 33],
+            [0, 0],
+            [-28, 22],
+            [-35.5, 1],
+            [0, 0],
+            [11, -33],
+            [28, -22],
+            [0, 0],
+            [-11, -33],
+            [-28, -22],
+            [0, 0],
+         ].map(
+            position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y]),
+         ),
+      );
+      this.canvas.polygon(
+         ...[
+            [10, 16],
+            [28, 22],
+            [35.5, 1],
+            [19, -7],
+            [28, -22],
+            [11, -33],
+            [0, -20],
+            [-11, -33],
+            [-28, -22],
+            [-19, -7],
+            [-35.5, 1],
+            [-28, 22],
+            [-10, 16],
+            [-11, 33],
+            [11, 33],
+         ].map(
+            position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y]),
+         ),
+      );
       this.canvas.fillStyle(paused ? "#fff" : "#000");
       this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 12);
       this.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
