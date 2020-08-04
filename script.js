@@ -13,18 +13,18 @@ let clickin = null;
 function setCostumes(ary_unlockedCostumes) {
    const c = ary_unlockedCostumes.filter((v, i, m) => m.indexOf(v) === i).reduce((a, v) => a + 2 ** v, 0).toString(36);
    document.cookie = `_d_=${c};`;
-};
+}
 function getUnlockedCostumes_as_ary() {
    let cookie = document.cookie.split(";").find(v => v.slice(0, 4) === "_d_=");
    if (cookie === undefined) {
       cookie = document.cookie = "_d_=1";
    }
    return parseInt(cookie.slice(4), 36).toString(2).split("").reverse().map((v, i) => +v ? i : -1).filter(i => i > -1);
-};
+}
 
 function update() {
    if (!paused) {
-      if(globals.evts.keys[84]) {
+      if (globals.evts.keys[84]) {
          globals.lvl = +prompt("Which level?") || globals.lvl;
          Player.reset();
          globals.time = Date.now();
@@ -97,7 +97,7 @@ function update() {
       pau = globals.start ? Math.floor((Date.now() - globals.start) / 100) / 10 : 0;
    }
 
-   
+
    draw.background();
    draw.boxes(globals.b);
    draw.walls(Player.position);
@@ -106,12 +106,12 @@ function update() {
    draw.info(globals.lvl, Player.deaths, pau);
    draw.subtext(globals.lvl, Player.deaths);
    draw.gear(paused);
-   
+
    if (paused) {
       draw.blankout();
       draw.variantMenu(globals.canvas.colorsInverted, globals.sneaky);
       draw.characterMenu(Player.unlockedCostumes);
-      
+
       if (globals.evts.clicked) {
          if (clickin === null) {
             if (globals.evts.mouse.x > 150 && globals.evts.mouse.x < 166 && !clickin) {
@@ -165,11 +165,15 @@ function update() {
 
 Player.unlockedCostumes = getUnlockedCostumes_as_ary();
 globals.b = Levels.generate(globals.lvl);
-
-setInterval(() => {
+function animator() {
    try {
       update();
    } catch (e) {
       console.error(e);
    }
-}, 16);
+   requestAnimationFrame(animator);
+}
+
+Player.unlockedCostumes = getUnlockedCostumes_as_ary();
+globals.b = Levels.generate(globals.lvl);
+animator();

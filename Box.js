@@ -21,18 +21,18 @@ export default class Box {
       this.position = new Vector(a.position);
       this.basePosition = new Vector(a.position);
       this.size = new Vector(a.size);
-      if(a.costume) {
+      if (a.costume) {
          this.costume = a.costume;
       }
       if (a.move) {
          this.move = {
             velocity: new Vector(a.move.velocity),
-            sineVector: new Vector(a.move.sineVector)
+            sineVector: new Vector(a.move.sineVector),
          };
       } else {
          this.move = {
             velocity: Vector.zero(),
-            sineVector: Vector.zero()
+            sineVector: Vector.zero(),
          };
       }
       this.col = Box.colors[this.type] || "#FFF";
@@ -148,18 +148,17 @@ export default class Box {
          this.fake = true;
       }
       if (this.type === "U" && this.checkInside(Player)) {
-         if(this.checkInside(Player)) {
+         if (this.checkInside(Player)) {
             Player.velocity.y += 2;
             Player.standing = true;
          }
-         
       }
       if (this.type === "V" && this.checkInside(Player)) {
          // Player.velocity.y -= 0.5;
          Player.position.y -= 4;
       }
       if (this.type === "W" && this.checkInside(Player)) {
-            return "levelup";
+         return "levelup";
       }
       if (this.type === "*") {
          this.visible = false;
@@ -172,7 +171,7 @@ export default class Box {
       }
    }
    draw(draw) {
-      if(this.visible) {
+      if (this.visible) {
          if (this.type === "*") {
             draw.character(this.costume, this.position.add([15, 15]).invertY(), 0);
          } else {
@@ -180,8 +179,8 @@ export default class Box {
                const hex = "0123456789abcdef";
                this.bright -= (this.bright >= 100);
                let brightness = hex[Math.floor(this.bright / 16)] + hex[this.bright % 16];
-               if(this.type === "F") {
-                  this.col = `#${brightness}${brightness}${brightness}`
+               if (this.type === "F") {
+                  this.col = `#${brightness}${brightness}${brightness}`;
                } else {
                   this.col = `#${brightness}0000`;
                }

@@ -2,77 +2,76 @@ import Vector from "./Vector.js";
 import Levels from "./Levels.js";
 
 export default class Draw {
-	/**
-	 * 
-	 * @param {Canvas} canvas 
-	 */
-	constructor(canvas) {
-		this.canvas = canvas;
-	}
-	background(){
-		this.canvas.fillStyle("#000");
-   	this.canvas.rect([0, 0], this.canvas.size);
-	}
-	coloredRect(color, position, size) {
-		this.canvas.fillStyle(color);
-		this.canvas.rect(position, size);
-	}
-	boxes(boxList) {
-		this.canvas.camera.enable();
-		boxList.forEach(box => box.draw(this));
-   	this.canvas.camera.disable();
-	}
-	walls(playerPosition){
-		this.canvas.fillStyle("#FFF");
-		this.canvas.rect([0, Math.round(playerPosition.y) + this.canvas.halfsize.y + 15], this.canvas.size);
-		this.canvas.rect([-Math.round(playerPosition.x) - 515, -1], this.canvas.size.scaleXY(0.5, 1));
-		this.canvas.rect([this.canvas.halfsize.x - Math.round(playerPosition.x) + 515, -1], this.canvas.size);
-	}
-	player(Player) {
-		this.character(Player.costume, this.canvas.halfsize, Player.eyePosition);
-	}
-	frame() {
-		this.canvas.fillStyle("#32C800");
-		this.canvas.rect([0, 0], [100, this.canvas.size.y]);
-		this.canvas.rect([this.canvas.size.x - 100, 0], [100, this.canvas.size.y]);
-		this.canvas.fillStyle("#0F0");
-		this.canvas.polygon([0, 0], [100, 50], [this.canvas.size.x - 100, 50], [this.canvas.size.x, 0]);
-		this.canvas.fillStyle("#009600");
-		this.canvas.polygon([0, this.canvas.size.y], [100, this.canvas.size.y - 50], [this.canvas.size.x - 100, this.canvas.size.y - 50], [this.canvas.size.x, this.canvas.size.y]);
-	}
-	info(level, deaths, time) {
-		this.canvas.fillStyle("#000");
-		this.canvas.font("30px Monospace");
-		this.canvas.text("Neon Prison", [this.canvas.halfsize.x, 35]);
-		this.canvas.font("25px Monospace");
-		this.canvas.text("Level:", [50, this.canvas.halfsize.y - 75]);
-		this.canvas.text(level, [50, this.canvas.halfsize.y - 45]);
-		this.canvas.text("Deaths:", [50, this.canvas.halfsize.y + 5]);
-		this.canvas.text(deaths, [50, this.canvas.halfsize.y + 35]);
-		this.canvas.text("Time:", [50, this.canvas.halfsize.y + 95]);
-		this.canvas.text(time, [50, this.canvas.halfsize.y + 115]);
-	}
-	subtext(level, deaths) {
-		let { sneaky, subtext } = Levels[level];
-		if (sneaky && deaths === 0) {
-			subtext = "You sneaky custard!\nI haven't gotten this far yet.";
-		}
-		this.canvas.font("15px Monospace");
-   	this.canvas.wrapText(subtext, [this.canvas.halfsize.x, this.canvas.size.y - 27], 18);
-	}
-	gear(paused) {
-		this.canvas.fillStyle(paused ? "#fff" : "#000");
-		this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 45);
-		this.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-		this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 20);
-		this.canvas.polygon(...[[28, 22], [35.5, 1], [0, 0], [11, 33], [-11, 33], [0, 0], [-28, 22], [-35.5, 1], [0, 0], [11, -33], [28, -22], [0, 0], [-11, -33], [-28, -22], [0, 0]].map(position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y])));
-		this.canvas.polygon(...[[10, 16], [28, 22], [35.5, 1], [19, -7], [28, -22], [11, -33], [0, -20], [-11, -33], [-28, -22], [-19, -7], [-35.5, 1], [-28, 22], [-10, 16], [-11, 33], [11, 33]].map(position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y])));
-		this.canvas.fillStyle(paused ? "#fff" : "#000");
-		this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 12);
-		this.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
-		this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 5);
+   /**
+    * @param {HTMLCanvasElement} canvas
+    */
+   constructor(canvas) {
+      this.canvas = canvas;
    }
-   blankout(){
+   background() {
+      this.canvas.fillStyle("#000");
+      this.canvas.rect([0, 0], this.canvas.size);
+   }
+   coloredRect(color, position, size) {
+      this.canvas.fillStyle(color);
+      this.canvas.rect(position, size);
+   }
+   boxes(boxList) {
+      this.canvas.camera.enable();
+      boxList.forEach(box => box.draw(this));
+      this.canvas.camera.disable();
+   }
+   walls(playerPosition) {
+      this.canvas.fillStyle("#FFF");
+      this.canvas.rect([0, Math.round(playerPosition.y) + this.canvas.halfsize.y + 15], this.canvas.size);
+      this.canvas.rect([-Math.round(playerPosition.x) - 515, -1], this.canvas.size.scaleXY(0.5, 1));
+      this.canvas.rect([this.canvas.halfsize.x - Math.round(playerPosition.x) + 515, -1], this.canvas.size);
+   }
+   player(Player) {
+      this.character(Player.costume, this.canvas.halfsize, Player.eyePosition);
+   }
+   frame() {
+      this.canvas.fillStyle("#32C800");
+      this.canvas.rect([0, 0], [100, this.canvas.size.y]);
+      this.canvas.rect([this.canvas.size.x - 100, 0], [100, this.canvas.size.y]);
+      this.canvas.fillStyle("#0F0");
+      this.canvas.polygon([0, 0], [100, 50], [this.canvas.size.x - 100, 50], [this.canvas.size.x, 0]);
+      this.canvas.fillStyle("#009600");
+      this.canvas.polygon([0, this.canvas.size.y], [100, this.canvas.size.y - 50], [this.canvas.size.x - 100, this.canvas.size.y - 50], [this.canvas.size.x, this.canvas.size.y]);
+   }
+   info(level, deaths, time) {
+      this.canvas.fillStyle("#000");
+      this.canvas.font("30px Monospace");
+      this.canvas.text("Neon Prison", [this.canvas.halfsize.x, 35]);
+      this.canvas.font("25px Monospace");
+      this.canvas.text("Level:", [50, this.canvas.halfsize.y - 75]);
+      this.canvas.text(level, [50, this.canvas.halfsize.y - 45]);
+      this.canvas.text("Deaths:", [50, this.canvas.halfsize.y + 5]);
+      this.canvas.text(deaths, [50, this.canvas.halfsize.y + 35]);
+      this.canvas.text("Time:", [50, this.canvas.halfsize.y + 95]);
+      this.canvas.text(time, [50, this.canvas.halfsize.y + 115]);
+   }
+   subtext(level, deaths) {
+      let { sneaky, subtext } = Levels[level];
+      if (sneaky && deaths === 0) {
+         subtext = "You sneaky custard!\nI haven't gotten this far yet.";
+      }
+      this.canvas.font("15px Monospace");
+      this.canvas.wrapText(subtext, [this.canvas.halfsize.x, this.canvas.size.y - 27], 18);
+   }
+   gear(paused) {
+      this.canvas.fillStyle(paused ? "#fff" : "#000");
+      this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 45);
+      this.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
+      this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 20);
+      this.canvas.polygon(...[[28, 22], [35.5, 1], [0, 0], [11, 33], [-11, 33], [0, 0], [-28, 22], [-35.5, 1], [0, 0], [11, -33], [28, -22], [0, 0], [-11, -33], [-28, -22], [0, 0]].map(position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y])));
+      this.canvas.polygon(...[[10, 16], [28, 22], [35.5, 1], [19, -7], [28, -22], [11, -33], [0, -20], [-11, -33], [-28, -22], [-19, -7], [-35.5, 1], [-28, 22], [-10, 16], [-11, 33], [11, 33]].map(position => new Vector(position).add([this.canvas.size.x - 50, this.canvas.halfsize.y])));
+      this.canvas.fillStyle(paused ? "#fff" : "#000");
+      this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 12);
+      this.canvas.fillStyle(paused ? "#cd38ff" : "#32C800");
+      this.canvas.circle([this.canvas.size.x - 50, this.canvas.halfsize.y], 5);
+   }
+   blankout() {
       this.canvas.fillStyle("rgba(0,0,0,0.25)");
       this.canvas.rect([100, 50], this.canvas.size.subtract([200, 100]));
    }
@@ -100,7 +99,7 @@ export default class Draw {
       this.canvas.text("Choose your character", [this.canvas.halfsize.x, this.canvas.size.y - 100]);
       unlockedCostumes.forEach((costume, i) => this.character(costume, [120 + i * 50, this.canvas.size.y - 70]));
    }
-	character(sprite, position, eyePosition) {
+   character(sprite, position, eyePosition) {
       if (!eyePosition) { eyePosition = 0 }
       position = new Vector(position);
       let { x, y } = position;
@@ -229,12 +228,12 @@ export default class Draw {
 }
 
 Draw.COSTUME = {
-	DEFAULT: 0,
-	INVERTED_COLORS: 1,
-	DEMON: 2,
-	ZOMBIE: 3,
-	GHOST: 4,
-	UPSIDE_DOWN: 5,
-	JAILED: 6,
-	MUSHROOM: 7,
+   DEFAULT: 0,
+   INVERTED_COLORS: 1,
+   DEMON: 2,
+   ZOMBIE: 3,
+   GHOST: 4,
+   UPSIDE_DOWN: 5,
+   JAILED: 6,
+   MUSHROOM: 7,
 };

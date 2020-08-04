@@ -4,8 +4,7 @@ export default class Vector {
          this.x = x.x;
          this.y = x.y;
       } else if (Array.isArray(x)) {
-         this.x = x[0];
-         this.y = x[1];
+         [this.x, this.y] = x;
       } else {
          this.x = x;
          this.y = y;
